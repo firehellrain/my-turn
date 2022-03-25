@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     # External
     'corsheaders',
     'rest_framework',
-    'rest_framework_simplejwt',
     # Django
     'django.contrib.admin',
     'django.contrib.auth',
@@ -100,10 +99,9 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
 REST_FRAMEWORK = {
-
-    'DEFAULT_AUTHENTICATION_CLASSES':(
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
 }
 
 AUTH_PASSWORD_VALIDATORS = [
