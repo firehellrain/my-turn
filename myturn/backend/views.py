@@ -4,14 +4,17 @@ from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.response import Response
 
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 @api_view(('GET',))
 @renderer_classes((TemplateHTMLRenderer, JSONRenderer))
+@login_required
 def index(request):
     data = {
         'prueba': 'Bienvenidos a MyTurn!',
     }
     return Response(data, status=status.HTTP_200_OK)
+
 
 @api_view(('POST',))
 @renderer_classes((TemplateHTMLRenderer, JSONRenderer))
