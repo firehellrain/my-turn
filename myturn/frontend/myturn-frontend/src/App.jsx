@@ -1,18 +1,19 @@
-import { Text } from '@chakra-ui/react'
-import Login from './Auth/Login'
-import Navbar from './shared/components/Navbar'
-import Fonts from './styles/Fonts'
+import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
+
+import Login from "./Auth/Login";
+import Dashboard from "./Dashboard/Dashboard"
+import Navbar from "./shared/components/Navbar";
 
 function App() {
-
-
   return (
-    <>
-      <Fonts/>
-      <Navbar/>
-      <Login/>
-    </>
-  )
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" exact element={<Login />}/>
+        <Route path="/main" element={<Dashboard/>} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
