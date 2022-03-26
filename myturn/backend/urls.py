@@ -27,4 +27,5 @@ urlpatterns = [
 
     # Borra la reunión del usuario
     path('delete_meet', views.delete_meet, name='delete_meet'),
+
 ]
