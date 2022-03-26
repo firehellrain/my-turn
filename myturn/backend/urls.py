@@ -11,7 +11,7 @@ urlpatterns = [
     # Cierra la sesión del usuario 
     path('logout', views.logoutUser, name='logout'),
 
-    ### URLs de aplicación ###
+    ### URLs de control de reuniones ###
 
     # Comprueba si el usuario tiene una reunión creada
     path('has_meet', views.user_has_meet, name='has_meet'),
