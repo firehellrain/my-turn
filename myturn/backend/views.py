@@ -11,7 +11,6 @@ from random import randint
 from .models import Meeting
 
 @api_view(('GET',))
-@login_required
 def index(request):
     data = {
         'prueba': 'Bienvenidos a MyTurn!',
