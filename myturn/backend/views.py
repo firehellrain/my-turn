@@ -1,6 +1,5 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from django.contrib.auth import authenticate, login, logout
@@ -28,7 +27,7 @@ def generate_unique_meeting():
     """
     while True:
         code = randint(1111, 9999)
-        if Meeting.objects.filter(meeting_id=code).exists(): 
+        if Meeting.objects.filter(meeting_id=code).count() == 0: 
             break
     return code
 
@@ -89,7 +88,6 @@ def access_meet(request, meeting_id):
         return Response(data, status=status.HTTP_200_OK)
     except: return response("El código de reunión no es válido", status.HTTP_400_BAD_REQUEST)
 
-# Crea una reunión cuyo moderador será el usuario solicitante y con el nombre dado.
 @api_view(('GET',))
 @login_required
 def create_meet(request):
@@ -116,5 +114,5 @@ def delete_meet(request):
         meeting = Meeting.objects.get(meeting_mod=request.user)
         meeting.delete()
         return Response(status=status.HTTP_200_OK)
-    except:  return response("El usuario no tiene una reunión creada", status.HTTP_400_BAD_REQUEST)
+    except:  return response("El usuario no es moderador en ninguna reunión", status.HTTP_400_BAD_REQUEST)
 
