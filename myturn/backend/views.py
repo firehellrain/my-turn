@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.forms.models import model_to_dict
 
+from random import randint
 from .models import Meeting
 
 @api_view(('GET',))
@@ -44,14 +45,22 @@ def user_has_meet(request):
 
 @api_view(('GET',))
 @login_required
-def access_meet(request, id):
-    meeting = get_object_or_404(Meeting, meeting_id=id)
+def access_meet(request, meeting_id):
+    meeting = get_object_or_404(Meeting, meeting_id=meeting_id)
     data = {'meeting': model_to_dict(meeting)}
     return Response(data, status=status.HTTP_200_OK)
 
 @api_view(('GET',))
 @login_required
 def create_meet(request):
-    meeting = get_object_or_404(Meeting, meeting_mod=request.user)
+    meeting = Meeting(meeting_id=randint(1111, 9999), meeting_mod=request.user, meeting_name=request.data.get('meetname'))
+    meeting.save()
     data = {'meeting': model_to_dict(meeting)}
     return Response(data, status=status.HTTP_200_OK)
+   
+@api_view(('GET',))
+@login_required
+def delete_meet(request):
+    meeting = Meeting.objects.get(meeting_mod=request.user)
+    meeting.delete()
+    return Response(status=status.HTTP_200_OK)
