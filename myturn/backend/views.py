@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.response import Response
 
 from django.contrib.auth import authenticate, login, logout
@@ -10,6 +11,7 @@ from django.forms.models import model_to_dict
 from .models import Meeting
 
 @api_view(('GET',))
+@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
 @login_required
 def index(request):
     data = {
@@ -19,6 +21,7 @@ def index(request):
 
 
 @api_view(('POST',))
+@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
 def loginUser(request):
     username = request.data.get('username')
     password = request.data.get('password')
@@ -31,27 +34,15 @@ def loginUser(request):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(('GET',))
+@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
 def logoutUser(request):
     logout(request)
     return Response(status=status.HTTP_200_OK)
 
 @api_view(('GET',))
+@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
 @login_required
 def user_has_meet(request):
-    meeting = get_object_or_404(Meeting, meeting_mod=request.user)
-    data = {'meeting': model_to_dict(meeting)}
-    return Response(data, status=status.HTTP_200_OK)
-
-@api_view(('GET',))
-@login_required
-def access_meet(request, id):
-    meeting = get_object_or_404(Meeting, meeting_id=id)
-    data = {'meeting': model_to_dict(meeting)}
-    return Response(data, status=status.HTTP_200_OK)
-
-@api_view(('GET',))
-@login_required
-def create_meet(request):
     meeting = get_object_or_404(Meeting, meeting_mod=request.user)
     data = {'meeting': model_to_dict(meeting)}
     return Response(data, status=status.HTTP_200_OK)
