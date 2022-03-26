@@ -18,7 +18,6 @@ def index(request):
     }
     return Response(data, status=status.HTTP_200_OK)
 
-
 @api_view(('POST',))
 def loginUser(request):
     username = request.data.get('username')
@@ -72,7 +71,7 @@ def delete_meet(request):
         meeting.delete()
         return Response(status=status.HTTP_200_OK)
     except:  return response("El usuario no tiene una reunión creada", status.HTTP_400_BAD_REQUEST)
-    
+
 # Devuelve una respuesta HTTP customizada
 def response(text, code):
     respuesta = HttpResponse(text)
