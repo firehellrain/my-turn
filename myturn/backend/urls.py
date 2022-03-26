@@ -5,9 +5,6 @@ urlpatterns = [
 
     ### URLs de autentificación ###
 
-    # Pestaña de inicio de sesión
-    path('', views.index, name='index'),
-
     # Comprueba las credenciales e inicia sesión
     path('login', views.loginUser, name='login'),
 

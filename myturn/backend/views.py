@@ -11,12 +11,22 @@ from django.http import HttpResponse
 from random import randint
 from .models import Meeting
 
-@api_view(('GET',))
-def index(request):
-    data = {
-        'prueba': 'Bienvenidos a MyTurn!',
-    }
-    return Response(data, status=status.HTTP_200_OK)
+### Funciones auxiliares ###
+
+# Devuelve una respuesta HTTP customizada
+def response(text, code):
+    respuesta = HttpResponse(text)
+    respuesta.status_code = code
+    return respuesta
+
+# Devuelve un código de reunión único
+def generate_unique_meeting():
+    while True:
+        code = randint(1111, 9999)
+        if Meeting.objects.filter(meeting_id=code).exists(): 
+            break
+    return code
+
 
 @api_view(('POST',))
 def loginUser(request):
@@ -57,7 +67,7 @@ def access_meet(request, meeting_id):
 @login_required
 def create_meet(request):
     try:
-        meeting = Meeting(meeting_id=randint(1111, 9999), meeting_mod=request.user, meeting_name=request.data.get('meetname'))
+        meeting = Meeting(meeting_id=generate_unique_meeting(), meeting_mod=request.user, meeting_name=request.data.get('meetname'))
         meeting.save()
         data = {'meeting': model_to_dict(meeting)}
         return Response(data, status=status.HTTP_200_OK)
@@ -72,8 +82,3 @@ def delete_meet(request):
         return Response(status=status.HTTP_200_OK)
     except:  return response("El usuario no tiene una reunión creada", status.HTTP_400_BAD_REQUEST)
 
-# Devuelve una respuesta HTTP customizada
-def response(text, code):
-    respuesta = HttpResponse(text)
-    respuesta.status_code = code
-    return respuesta
