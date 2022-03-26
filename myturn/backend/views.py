@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
@@ -5,6 +6,9 @@ from rest_framework.response import Response
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.forms.models import model_to_dict
+
+from .models import Meeting
 
 @api_view(('GET',))
 @renderer_classes((TemplateHTMLRenderer, JSONRenderer))
@@ -34,3 +38,11 @@ def loginUser(request):
 def logoutUser(request):
     logout(request)
     return Response(status=status.HTTP_200_OK)
+
+@api_view(('GET',))
+@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
+@login_required
+def user_has_meet(request):
+    meeting = get_object_or_404(Meeting, meeting_mod=request.user)
+    data = {'meeting': model_to_dict(meeting)}
+    return Response(data, status=status.HTTP_200_OK)

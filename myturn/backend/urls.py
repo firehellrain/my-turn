@@ -13,4 +13,7 @@ urlpatterns = [
 
     # Cierra la sesión del usuario 
     path('logout', views.logoutUser, name='logout'),
+
+    # Comprueba si el usuario tiene una reunión creada
+    path('hasmeet', views.user_has_meet, name='hasmeet'),
 ]
