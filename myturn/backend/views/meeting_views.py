@@ -1,56 +1,14 @@
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from .aux_funcs import response, generate_unique_meeting
 
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.forms.models import model_to_dict
+from django.contrib.auth.models import User
+
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes
-from django.http import HttpResponse
 
-from random import randint
-from .models import Meeting
-
-### Funciones auxiliares ###
-
-def response(text, code):
-    """
-        Devuelve una respuesta HTTP customizada
-        con el texto y el código dados
-    """
-    response = HttpResponse(text)
-    response.status_code = code
-    return response
-
-def generate_unique_meeting():
-    """ 
-        Devuelve un código de reunión único 
-    """
-    while True:
-        code = randint(1111, 9999)
-        if Meeting.objects.filter(meeting_id=code).count() == 0: 
-            break
-    return code
-
-### Vistas de la aplicación ###
-
-@api_view(('GET',))
-@permission_classes([IsAuthenticated])
-def user_data(request):
-    """ 
-        Devuelve la información del usuario que lo solicita
-    """
-    data = model_to_dict(request.user)
-    return Response(data, status=status.HTTP_200_OK)
-
-@api_view(('GET',))
-def logoutUser(request):
-    """ 
-        Cierra la sesión del usuario que lo solicita 
-    """
-    request.user.auth_token.delete()
-    return response("Se ha cerrado correctamente la sesión", status.HTTP_200_OK)
+from backend.models import Meeting
 
 @api_view(('GET',))
 @permission_classes([IsAuthenticated])
@@ -101,6 +59,8 @@ def create_meet(request):
 def delete_meet(request):
     """
         Borra la reunión que modera el usuario solicitante.
+        En caso de que no sea moderador de una reunión,
+        devuelve un aviso de error.
     """
     try:
         meeting = Meeting.objects.get(meeting_mod=request.user)
@@ -108,3 +68,24 @@ def delete_meet(request):
         return response("Se ha cerrado correctamente la reunión", status.HTTP_200_OK)
     except: return response("El usuario no es moderador en ninguna reunión", status.HTTP_400_BAD_REQUEST)
 
+@api_view(('POST',))
+@permission_classes([IsAuthenticated])
+def change_mod(request):
+    """
+        Cambia al moderador de la reunión actual.
+        Si el usuario no es moderador de ninguna reunión,
+        devuelve un error avisando. Si el usuario para asignar
+        como moderador no existe, devuelve otro error.
+    """
+    try:
+        meeting = Meeting.objects.get(meeting_mod=request.user)
+        new_mod = User.objects.filter(username=request.data.get('new_mod'))
+        if new_mod.exists():
+            try:
+                Meeting.objects.get(meeting_mod=new_mod)
+                meeting.meeting_mod = new_mod
+                meeting.save()
+                return response("Moderador cambiado correctamente", status.HTTP_200_OK)
+            except: return response("El usuario solicitado ya es moderador en otra reunión", status.HTTP_400_BAD_REQUEST)
+        else: return response("El usuario solicitado no existe", status.HTTP_400_BAD_REQUEST)
+    except: return response("El usuario no es moderador de ninguna reunión", status.HTTP_400_BAD_REQUEST)
