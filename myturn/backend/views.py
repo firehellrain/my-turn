@@ -48,7 +48,7 @@ def loginUser(request):
         login(request, user)
         return Response(status=status.HTTP_200_OK)
     else:
-        return response("Las credenciales de inicio de sesión no son válidas", status=status.HTTP_404_NOT_FOUND)
+        return response("Las credenciales de inicio de sesión no son válidas", status.HTTP_404_NOT_FOUND)
 
 @api_view(('GET',))
 def logoutUser(request):
