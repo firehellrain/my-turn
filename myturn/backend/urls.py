@@ -7,6 +7,8 @@ urlpatterns = [
     # Comprueba las credenciales y devuelve un token de sesión
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 
+    path('user_data', views.user_data, name='user_data'),
+
     # Cierra la sesión del usuario 
     path('logout', views.logoutUser, name='logout'),
 
