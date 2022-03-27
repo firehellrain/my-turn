@@ -30,7 +30,7 @@ const Navbar = () => {
   const handleLogout = () => {
     auth.logout();
     navigate("../");
-  }
+  };
 
   const handleDropDownClick = () => {
     setIsDropped(!isDropped);
@@ -49,46 +49,53 @@ const Navbar = () => {
         icon={colorMode === "dark" ? <FaSun /> : <FaMoon />}
         onClick={toggleColorMode}
       />
-      <HStack>
-        <Avatar h="40px" w="40px" name="pablo perez" bgColor={"primary"} />
-        <MotionTriangle
-          cursor="pointer"
-          initial="withdrawn"
-          animate={dropDownController}
-          variants={{
-            withdrawn: {
-              transform: "rotate(0deg)",
-              transition: { duration: 0.3 },
-            },
-            dropped: {
-              transform: "rotate(180deg)",
-              transition: { duration: 0.3 },
-            },
-          }}
-          onClick={handleDropDownClick}
-        />
-        {isDropped && (
-          <Box
-            h="auto"
-            w="200px"
-            position={"absolute"}
-            right="1"
-            bgColor={"primary"}
-            top="60px"
-            borderRadius={"md"}
-            textAlign="center"
-            background={"transparent"}
-            borderWidth="2px"
-          >
-            <Button w="100%" borderRadius={"md"} onClick={handleLogout} borderBottomRadius="0">
-              <Text>Cerrar sesión</Text>
-            </Button>
-            <Button w="100%" borderRadius={"md"} borderTopRadius="0">
-              <Text>Moficar mi perfil</Text>
-            </Button>
-          </Box>
-        )}
-      </HStack>
+      {auth.isLoggedIn && (
+        <HStack>
+          <Avatar h="40px" w="40px" name="pablo perez" bgColor={"primary"} />
+          <MotionTriangle
+            cursor="pointer"
+            initial="withdrawn"
+            animate={dropDownController}
+            variants={{
+              withdrawn: {
+                transform: "rotate(0deg)",
+                transition: { duration: 0.3 },
+              },
+              dropped: {
+                transform: "rotate(180deg)",
+                transition: { duration: 0.3 },
+              },
+            }}
+            onClick={handleDropDownClick}
+          />
+          {isDropped && (
+            <Box
+              h="auto"
+              w="200px"
+              position={"absolute"}
+              right="1"
+              bgColor={"primary"}
+              top="60px"
+              borderRadius={"md"}
+              textAlign="center"
+              background={"transparent"}
+              borderWidth="2px"
+            >
+              <Button
+                w="100%"
+                borderRadius={"md"}
+                onClick={handleLogout}
+                borderBottomRadius="0"
+              >
+                <Text>Cerrar sesión</Text>
+              </Button>
+              <Button w="100%" borderRadius={"md"} borderTopRadius="0">
+                <Text>Moficar mi perfil</Text>
+              </Button>
+            </Box>
+          )}
+        </HStack>
+      )}
     </HStack>
   );
 };

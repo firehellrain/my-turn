@@ -1,7 +1,18 @@
 import { VStack, Heading,HStack,PinInput,PinInputField,Button, Input } from "@chakra-ui/react";
 import React from "react";
 
+import { AuthContext } from "../shared/context/auth-context";
+import { useContext,useEffect } from "react";
+
 const Dashboard = () => {
+
+  const auth = useContext(AuthContext);
+
+  useEffect(() => {
+    console.log(auth.isLoggedIn);
+  }, [])
+  
+
   return (
     <VStack>
       <Heading>Ingresa en una reunión</Heading>

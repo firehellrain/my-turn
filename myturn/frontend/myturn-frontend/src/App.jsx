@@ -6,12 +6,13 @@ import {
 } from "react-router-dom";
 import { AuthContext } from "./shared/context/auth-context";
 
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useContext } from "react";
 
 import Login from "./Auth/Login";
 import Dashboard from "./Dashboard/Dashboard";
 import Footer from "./shared/components/Footer";
 import Navbar from "./shared/components/Navbar";
+import Meet from "./Meet/Meet";
 
 function App() {
   const [token, setToken] = useState(null);
@@ -43,30 +44,32 @@ function App() {
     ) {
       login(storedData.token, new Date(storedData.expiration));
     }
-
   }, [login]);
 
   let routes;
 
-  if (token) {
-    //usuario logeado
-    console.log("el usuario esta logeado")
-    routes = (
-      <Routes>
-        <Route path="/main" element={<Dashboard />} />
-        <Route path="*" element={<Navigate to="/main" replace />} />
-      </Routes>
-    );
-  } else {
+  if (!token) {
+    console.log("user is not logged");
     //usuario no logeado
-    console.log("el usuario no esta logeado")
     routes = (
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
+  } else {
+    //usuario logeado
+    console.log("user is logged");
+
+    routes = (
+      <Routes>
+        <Route path="/main" element={<Dashboard />} />
+        <Route path="/meet" element={<Meet />} />
+        <Route path="*" element={<Navigate to="/main" replace />} />
+      </Routes>
+    );
   }
+  
 
   return (
     <AuthContext.Provider
@@ -79,7 +82,9 @@ function App() {
     >
       <Router>
         <Navbar />
-        {routes}
+        <main>
+          {routes}
+        </main>
         <Footer />
       </Router>
     </AuthContext.Provider>
