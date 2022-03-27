@@ -1,17 +1,14 @@
 from django.urls import path
+from rest_framework.authtoken.views import obtain_auth_token
 from . import views
 
 urlpatterns = [
 
-    ### URLs de autentificación ###
-
-    # Comprueba las credenciales e inicia sesión
-    path('login', views.loginUser, name='login'),
+    # Comprueba las credenciales y devuelve un token de sesión
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 
     # Cierra la sesión del usuario 
     path('logout', views.logoutUser, name='logout'),
-
-    ### URLs de control de reuniones ###
 
     # Comprueba si el usuario tiene una reunión creada
     path('has_meet', views.user_has_meet, name='has_meet'),

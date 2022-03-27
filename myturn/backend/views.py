@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.forms.models import model_to_dict
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
 from django.http import HttpResponse
 
 from random import randint
@@ -31,37 +33,18 @@ def generate_unique_meeting():
             break
     return code
 
-### Vistas de autentificación ###
-
-@api_view(('POST',))
-def loginUser(request):
-    """
-        Comprueba si las credenciales dadas son válidas.
-        En caso afirmativo inicia la sesión al usuario,
-        en caso contraro devuelve un error
-    """
-    username = request.data.get('username')
-    password = request.data.get('password')
-    user = authenticate(request, username=username, password=password)
-
-    if user is not None:
-        login(request, user)
-        return Response(status=status.HTTP_200_OK)
-    else:
-        return response("Las credenciales de inicio de sesión no son válidas", status.HTTP_404_NOT_FOUND)
+### Vistas de la aplicación ###
 
 @api_view(('GET',))
 def logoutUser(request):
     """ 
         Cierra la sesión del usuario que lo solicita 
     """
-    logout(request)
-    return Response(status=status.HTTP_200_OK)
-
-### Vistas de control de reuniones ###
+    request.user.auth_token.delete()
+    return response("Se ha cerrado correctamente la sesión", status.HTTP_200_OK)
 
 @api_view(('GET',))
-@login_required
+@permission_classes([IsAuthenticated])
 def user_has_meet(request):
     """
         Comprueba si el usuario está moderando una reunión. 
@@ -75,7 +58,7 @@ def user_has_meet(request):
     except: return response("El usuario no es moderador en ninguna reunión", status.HTTP_400_BAD_REQUEST)
 
 @api_view(('GET',))
-@login_required
+@permission_classes([IsAuthenticated])
 def access_meet(request, meeting_id):
     """
         Comprueba si existe una reunión con el código dado. 
@@ -89,7 +72,7 @@ def access_meet(request, meeting_id):
     except: return response("El código de reunión no es válido", status.HTTP_400_BAD_REQUEST)
 
 @api_view(('GET',))
-@login_required
+@permission_classes([IsAuthenticated])
 def create_meet(request):
     """
         Crea una reunión cuyo moderador será el usuario 
@@ -105,7 +88,7 @@ def create_meet(request):
     except: return response("El usuario es moderador en una reunión existente", status.HTTP_400_BAD_REQUEST)
 
 @api_view(('GET',))
-@login_required
+@permission_classes([IsAuthenticated])
 def delete_meet(request):
     """
         Borra la reunión que modera el usuario solicitante.
@@ -113,6 +96,6 @@ def delete_meet(request):
     try:
         meeting = Meeting.objects.get(meeting_mod=request.user)
         meeting.delete()
-        return Response(status=status.HTTP_200_OK)
-    except:  return response("El usuario no es moderador en ninguna reunión", status.HTTP_400_BAD_REQUEST)
+        return response("Se ha cerrado correctamente la reunión", status.HTTP_200_OK)
+    except: return response("El usuario no es moderador en ninguna reunión", status.HTTP_400_BAD_REQUEST)
 

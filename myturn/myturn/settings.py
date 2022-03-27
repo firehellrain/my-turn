@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     # External
     'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
     # Django
     'django.contrib.admin',
     'django.contrib.auth',
