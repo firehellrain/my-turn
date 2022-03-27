@@ -1,17 +1,17 @@
 from django.urls import path
+from rest_framework.authtoken.views import obtain_auth_token
 from . import views
 
 urlpatterns = [
 
-    ### URLs de autentificación ###
+    # Comprueba las credenciales y devuelve un token de sesión
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 
-    # Comprueba las credenciales e inicia sesión
-    path('login', views.loginUser, name='login'),
+    # Devuelve la información del usuario que lo solicita
+    path('user_data', views.user_data, name='user_data'),
 
     # Cierra la sesión del usuario 
     path('logout', views.logoutUser, name='logout'),
-
-    ### URLs de control de reuniones ###
 
     # Comprueba si el usuario tiene una reunión creada
     path('has_meet', views.user_has_meet, name='has_meet'),
@@ -24,5 +24,17 @@ urlpatterns = [
 
     # Borra la reunión del usuario
     path('delete_meet', views.delete_meet, name='delete_meet'),
+
+    # Solicita la lista de turnos de la reunión dada
+    path('get_turn_list/<int:meeting_id>', views.get_turn_list, name='get_turn_list'),
+
+    # Solicita un turno del tipo dado por el usuario
+    path('request_turn/<int:meeting_id>', views.request_turn, name='request_turn'),
+
+    # Elimina el turno que el usuario haya solicitado
+    path('delete_turn/<int:meeting_id>', views.delete_turn, name='delete_turn'),
+
+    # Cambia al moderador de la reunión actual
+    path('change_mod', views.change_mod, name='change_mod'),
 
 ]

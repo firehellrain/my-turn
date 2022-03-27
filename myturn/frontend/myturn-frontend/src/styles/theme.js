@@ -7,9 +7,12 @@ const config = {
 
 const colors = {
     primary:"#00ACC9",
+    primary_hover:"#00A1B2",
     
     secondary: "#16365B",
-    secondary_dark:"#1B4066"
+    secondary_dark:"#183754",
+
+    footer:"#00ACC9"
 }
 
 const fonts = {

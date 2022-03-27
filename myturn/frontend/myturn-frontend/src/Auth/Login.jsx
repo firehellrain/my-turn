@@ -13,33 +13,41 @@ import {
   HStack,
   InputRightElement,
   InputGroup,
+  IconButton,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import  {FaEye,FaEyeSlash} from "react-icons/fa";
 import axios from "axios";
 
 /* hooks */
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
+import { useNavigate } from "react-router";
 
 /* assets */
 import LogoBlanco from "../assets/LogoBlanco.png";
 
 /* custom elements */
+import { AuthContext } from "../shared/context/auth-context";
 
 /* 
 TODO: cambiar color de boton de inicio de sesión
 TODO: poner slider con distinta info
 TODO: poner fondo con algunos colores
-TODO: ajustar boton de mostrar para modo oscuro
-TODO: mejorar color rectangulo izq en modo oscuro
 */
 
 const MotionImage = motion(Image);
 
 const Login = () => {
+
+  const auth = useContext(AuthContext);
+
+  const navigate = useNavigate();
+
   const leftBg = useColorModeValue("secondary", "secondary_dark");
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState(null);
+  const [loading,setIsLoading] = useState(false);
   const [password, setPassword] = useState(null);
   const [username, setUsername] = useState(null);
 
@@ -61,15 +69,23 @@ const Login = () => {
     } else if (password && !username) {
       setError("Debes introducir un nombre de usuario para iniciar sesión");
     } else {
-      axios.post("http://localhost:8000/backend/login", {
+      setIsLoading(true) //Start loading untill response
+      axios.post("http://localhost:8000/backend/api-token-auth/", {
         username: username,
         password: password,
       })
       .then( response => {
           console.log(response);
+          setIsLoading(false);
+          /* TODO: modificar context para asignar logeo?? */
+          console.log(response.data.token)
+          auth.login(response.data.token)
+          navigate("/main");
       })
       .catch(err => {
-          console.log(err);
+        setIsLoading(false);
+        if(err.response) setError(err.response.statusText);
+          
       })
     }
   };
@@ -88,6 +104,7 @@ const Login = () => {
         boxShadow={
           "rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;"
         }
+        mb="50px"
       >
         {/* Left Box */}
         <VStack
@@ -197,29 +214,34 @@ const Login = () => {
                   color={leftBg}
                   fontWeight={"700"}
                   placeholder="Introduce tu contraseña"
+                  maxLength={30}
                   _placeholder={{ opacity: 1, color: "gray.400" }}
                   focusBorderColor="primary"
                   borderColor={"gray.300"}
                   onChange={handlePasswordUpdate}
                 />
                 <InputRightElement width="4.5rem">
-                  <Button
+                  <IconButton
                     h="1.75rem"
                     size="sm"
                     onClick={() => {
                       setIsPasswordVisible(!isPasswordVisible);
                     }}
-                  >
-                    {isPasswordVisible ? "Ocultar" : "Mostrar"}
-                  </Button>
+                    icon={isPasswordVisible ? <FaEyeSlash/> : <FaEye/>}
+                    color="black"
+                    bgColor={"gray.100"}
+                    _hover={{"bgColor":"gray.200"}}
+                  />
+                    
+                  
                 </InputRightElement>
               </InputGroup>
             </HStack>
           </Box>
-          <Button colorScheme={"facebook"} onClick={validateUserInput}>
+          <Button bgColor={"primary"} isLoading={loading} _hover={{"bgColor":"primary_hover"}} color="white" onClick={validateUserInput}>
             Iniciar Sesión
           </Button>{" "}
-          {/* TODO: cambiar y ponerlo en otro lado más estetico */}
+          {/* TODO: animación */}
           {error && (
             <Box w="80%">
               <Text fontSize={"lg"} color="red.400">
