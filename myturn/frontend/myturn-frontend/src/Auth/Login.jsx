@@ -20,12 +20,14 @@ import  {FaEye,FaEyeSlash} from "react-icons/fa";
 import axios from "axios";
 
 /* hooks */
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
+import { useNavigate } from "react-router";
 
 /* assets */
 import LogoBlanco from "../assets/LogoBlanco.png";
 
 /* custom elements */
+import { AuthContext } from "../shared/context/auth-context";
 
 /* 
 TODO: cambiar color de boton de inicio de sesión
@@ -36,10 +38,16 @@ TODO: poner fondo con algunos colores
 const MotionImage = motion(Image);
 
 const Login = () => {
+
+  const auth = useContext(AuthContext);
+
+  const navigate = useNavigate();
+
   const leftBg = useColorModeValue("secondary", "secondary_dark");
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState(null);
+  const [loading,setIsLoading] = useState(false);
   const [password, setPassword] = useState(null);
   const [username, setUsername] = useState(null);
 
@@ -61,14 +69,19 @@ const Login = () => {
     } else if (password && !username) {
       setError("Debes introducir un nombre de usuario para iniciar sesión");
     } else {
+      setIsLoading(true) //Start loading untill response
       axios.post("http://localhost:8000/backend/login", {
         username: username,
         password: password,
       })
       .then( response => {
           console.log(response);
+          setIsLoading(false);
+          /* TODO: modificar context para asignar logeo?? */
+          navigate("/main");
       })
       .catch(err => {
+        setIsLoading(false);
         if(err.response) setError(err.response.statusText);
           
       })
@@ -89,6 +102,7 @@ const Login = () => {
         boxShadow={
           "rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;"
         }
+        mb="50px"
       >
         {/* Left Box */}
         <VStack
@@ -222,7 +236,7 @@ const Login = () => {
               </InputGroup>
             </HStack>
           </Box>
-          <Button bgColor={"primary"} _hover={{"bgColor":"primary_hover"}} color="white" onClick={validateUserInput}>
+          <Button bgColor={"primary"} isLoading={loading} _hover={{"bgColor":"primary_hover"}} color="white" onClick={validateUserInput}>
             Iniciar Sesión
           </Button>{" "}
           {/* TODO: animación */}

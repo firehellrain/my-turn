@@ -10,7 +10,9 @@ const colors = {
     primary_hover:"#00A1B2",
     
     secondary: "#16365B",
-    secondary_dark:"#183754"
+    secondary_dark:"#183754",
+
+    footer:"#00ACC9"
 }
 
 const fonts = {
