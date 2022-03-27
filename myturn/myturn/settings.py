@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    'channels',
     # Django
     'django.contrib.admin',
     'django.contrib.auth',
@@ -84,7 +85,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'myturn.wsgi.application'
+ASGI_APPLICATION = 'myturn.asgi.application'
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1",6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
