@@ -39,7 +39,7 @@ def generate_unique_meeting():
 @permission_classes([IsAuthenticated])
 def user_data(request):
     """ 
-        Cierra la sesión del usuario que lo solicita 
+        Devuelve la información del usuario que lo solicita
     """
     data = model_to_dict(request.user)
     return Response(data, status=status.HTTP_200_OK)
