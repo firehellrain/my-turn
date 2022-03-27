@@ -70,7 +70,7 @@ const Login = () => {
       setError("Debes introducir un nombre de usuario para iniciar sesión");
     } else {
       setIsLoading(true) //Start loading untill response
-      axios.post("http://localhost:8000/backend/login", {
+      axios.post("http://localhost:8000/backend/api-token-auth/", {
         username: username,
         password: password,
       })
@@ -78,6 +78,8 @@ const Login = () => {
           console.log(response);
           setIsLoading(false);
           /* TODO: modificar context para asignar logeo?? */
+          console.log(response.data.token)
+          auth.login(response.data.token)
           navigate("/main");
       })
       .catch(err => {
