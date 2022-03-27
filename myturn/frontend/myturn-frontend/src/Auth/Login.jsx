@@ -13,8 +13,10 @@ import {
   HStack,
   InputRightElement,
   InputGroup,
+  IconButton,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import  {FaEye,FaEyeSlash} from "react-icons/fa";
 import axios from "axios";
 
 /* hooks */
@@ -29,8 +31,6 @@ import LogoBlanco from "../assets/LogoBlanco.png";
 TODO: cambiar color de boton de inicio de sesión
 TODO: poner slider con distinta info
 TODO: poner fondo con algunos colores
-TODO: ajustar boton de mostrar para modo oscuro
-TODO: mejorar color rectangulo izq en modo oscuro
 */
 
 const MotionImage = motion(Image);
@@ -69,7 +69,8 @@ const Login = () => {
           console.log(response);
       })
       .catch(err => {
-          console.log(err);
+        if(err.response) setError(err.response.statusText);
+          
       })
     }
   };
@@ -197,29 +198,34 @@ const Login = () => {
                   color={leftBg}
                   fontWeight={"700"}
                   placeholder="Introduce tu contraseña"
+                  maxLength={30}
                   _placeholder={{ opacity: 1, color: "gray.400" }}
                   focusBorderColor="primary"
                   borderColor={"gray.300"}
                   onChange={handlePasswordUpdate}
                 />
                 <InputRightElement width="4.5rem">
-                  <Button
+                  <IconButton
                     h="1.75rem"
                     size="sm"
                     onClick={() => {
                       setIsPasswordVisible(!isPasswordVisible);
                     }}
-                  >
-                    {isPasswordVisible ? "Ocultar" : "Mostrar"}
-                  </Button>
+                    icon={isPasswordVisible ? <FaEyeSlash/> : <FaEye/>}
+                    color="black"
+                    bgColor={"gray.100"}
+                    _hover={{"bgColor":"gray.200"}}
+                  />
+                    
+                  
                 </InputRightElement>
               </InputGroup>
             </HStack>
           </Box>
-          <Button colorScheme={"facebook"} onClick={validateUserInput}>
+          <Button bgColor={"primary"} _hover={{"bgColor":"primary_hover"}} color="white" onClick={validateUserInput}>
             Iniciar Sesión
           </Button>{" "}
-          {/* TODO: cambiar y ponerlo en otro lado más estetico */}
+          {/* TODO: animación */}
           {error && (
             <Box w="80%">
               <Text fontSize={"lg"} color="red.400">
