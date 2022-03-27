@@ -31,7 +31,6 @@ function App() {
 
   const logout = useCallback(() => {
     setToken(null);
-    setUserId(null);
     localStorage.removeItem("userData");
   }, []);
 
@@ -44,25 +43,27 @@ function App() {
     ) {
       login(storedData.token, new Date(storedData.expiration));
     }
+
   }, [login]);
 
   let routes;
 
   if (token) {
     //usuario logeado
-    routes = (
-      <Routes>
-        <Route path="/" exact element={<Login />} />
-        <Route path="/main" element={<Dashboard />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    );
-  } else {
-    //usuario no logeado
+    console.log("el usuario esta logeado")
     routes = (
       <Routes>
         <Route path="/main" element={<Dashboard />} />
         <Route path="*" element={<Navigate to="/main" replace />} />
+      </Routes>
+    );
+  } else {
+    //usuario no logeado
+    console.log("el usuario no esta logeado")
+    routes = (
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
   }
