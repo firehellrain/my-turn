@@ -5,26 +5,9 @@ from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
 import json, logging
 
-from .views import delete_meet
 from .models import Meeting
 
-def create_meeting(id, name, mod):
-    """
-        Crea una reunión con la id, el nombre de reunión y el moderador dados
-    """
-    return Meeting.objects.create(meeting_id=id, meeting_name=name, meeting_mod=mod)
-
-def get_meeting(mod):
-    """
-        Devuelve la reunión que modera el usuario dado
-    """
-    return Meeting.objects.get(meeting_mod=mod)
-
-def create_user(name, pw):
-    """
-        Crea un usuario con el nombre y la contraseña dados
-    """
-    return User.objects.create_user(username=name, password=pw)
+from views.aux_funcs import create_meeting, create_user
 
 class MeetingTestCase(TestCase):
 

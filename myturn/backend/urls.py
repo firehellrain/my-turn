@@ -25,4 +25,16 @@ urlpatterns = [
     # Borra la reunión del usuario
     path('delete_meet', views.delete_meet, name='delete_meet'),
 
+    # Solicita la lista de turnos de la reunión dada
+    path('get_turn_list/<int:meeting_id>', views.get_turn_list, name='get_turn_list'),
+
+    # Solicita un turno del tipo dado por el usuario
+    path('request_turn/<int:meeting_id>', views.request_turn, name='request_turn'),
+
+    # Elimina el turno que el usuario haya solicitado
+    path('delete_turn/<int:meeting_id>', views.delete_turn, name='delete_turn'),
+
+    # Cambia al moderador de la reunión actual
+    path('change_mod', views.change_mod, name='change_mod'),
+
 ]
