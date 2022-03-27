@@ -1,9 +1,17 @@
-import {
+/* import {
   Routes,
   Route,
   BrowserRouter as Router,
   Navigate,
-} from "react-router-dom";
+} from "react-router-dom"; */
+
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom';
+
 import { AuthContext } from "./shared/context/auth-context";
 
 import { useEffect, useCallback, useState, useContext } from "react";
@@ -52,21 +60,25 @@ function App() {
     console.log("user is not logged");
     //usuario no logeado
     routes = (
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <Switch>
+        <Route path="/">
+          <Login />
+        </Route>
+        <Redirect to="/"/>
+      </Switch>
     );
   } else {
     //usuario logeado
     console.log("user is logged");
 
     routes = (
-      <Routes>
-        <Route path="/main" element={<Dashboard />} />
-        <Route path="/meet" element={<Meet />} />
-        <Route path="*" element={<Navigate to="/main" replace />} />
-      </Routes>
+      <Switch>
+        <Route path="/main">
+          <Dashboard />
+        </Route>
+        <Route path="/meet"><Meet /></Route>
+        <Redirect to="main"/>
+      </Switch>
     );
   }
   

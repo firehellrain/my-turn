@@ -21,7 +21,8 @@ import axios from "axios";
 
 /* hooks */
 import React, { useState,useContext } from "react";
-import { useNavigate } from "react-router";
+/* import { useNavigate } from "react-router"; */
+import { useHistory } from "react-router-dom";
 
 /* assets */
 import LogoBlanco from "../assets/LogoBlanco.png";
@@ -41,7 +42,8 @@ const Login = () => {
 
   const auth = useContext(AuthContext);
 
-  const navigate = useNavigate();
+ /*  const navigate = useNavigate(); */
+  const history = useHistory();
 
   const leftBg = useColorModeValue("secondary", "secondary_dark");
 
@@ -80,7 +82,8 @@ const Login = () => {
           /* TODO: modificar context para asignar logeo?? */
           console.log(response.data.token)
           auth.login(response.data.token)
-          navigate("/main");
+          /* navigate("/main"); */
+          history.push("main");
       })
       .catch(err => {
         setIsLoading(false);

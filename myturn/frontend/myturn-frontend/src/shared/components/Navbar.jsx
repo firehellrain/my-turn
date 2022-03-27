@@ -13,13 +13,15 @@ import { FaSun, FaMoon } from "react-icons/fa";
 import { AuthContext } from "../context/auth-context";
 import { useContext, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
-import { useNavigate } from "react-router";
+/* import { useNavigate } from "react-router"; */
+import { useHistory } from "react-router-dom";
 
 const MotionTriangle = motion(TriangleDownIcon);
 
 const Navbar = () => {
   const auth = useContext(AuthContext);
-  const navigate = useNavigate();
+  /* const navigate = useNavigate(); */
+  const history = useHistory();
 
   const [isDropped, setIsDropped] = useState(false);
 
@@ -29,7 +31,8 @@ const Navbar = () => {
 
   const handleLogout = () => {
     auth.logout();
-    navigate("../");
+    /* navigate("../"); */
+    history.push("/")
   };
 
   const handleDropDownClick = () => {
