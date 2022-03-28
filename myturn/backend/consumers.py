@@ -39,5 +39,6 @@ class MeetingConsumer(AsyncWebsocketConsumer):
         message = event['message']
 
         await self.send(text_data=json.dumps({
-            'message': message
+            'message': message,
+            'refresh_turns': True,
         }))
