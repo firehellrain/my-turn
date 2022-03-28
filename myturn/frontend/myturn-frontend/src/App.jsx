@@ -67,7 +67,7 @@ function App() {
         <Route path="/main">
           <Dashboard />
         </Route>
-        <Route path="/meet">
+        <Route path="/meet/:mid">
           <Meet />
         </Route>
         <Redirect to="main" />
