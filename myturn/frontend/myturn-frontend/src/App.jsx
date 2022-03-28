@@ -1,20 +1,13 @@
-/* import {
-  Routes,
-  Route,
-  BrowserRouter as Router,
-  Navigate,
-} from "react-router-dom"; */
-
 import {
   BrowserRouter as Router,
   Redirect,
   Route,
   Switch,
-} from 'react-router-dom';
+} from "react-router-dom";
 
 import { AuthContext } from "./shared/context/auth-context";
 
-import { useEffect, useCallback, useState, useContext } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 
 import Login from "./Auth/Login";
 import Dashboard from "./Dashboard/Dashboard";
@@ -57,36 +50,35 @@ function App() {
   let routes;
 
   if (!token) {
-    console.log("user is not logged");
     //usuario no logeado
     routes = (
       <Switch>
-        <Route path="/">
+        <Route path="/" exact>
           <Login />
         </Route>
-        <Redirect to="/"/>
+        <Redirect to="/" />
       </Switch>
     );
   } else {
     //usuario logeado
-    console.log("user is logged");
 
     routes = (
       <Switch>
         <Route path="/main">
           <Dashboard />
         </Route>
-        <Route path="/meet"><Meet /></Route>
-        <Redirect to="main"/>
+        <Route path="/meet/:mid">
+          <Meet />
+        </Route>
+        <Redirect to="main" />
       </Switch>
     );
   }
-  
 
   return (
     <AuthContext.Provider
       value={{
-        isLoggedIn: !!token, //true if there's no token
+        isLoggedIn: !!token, //this will be true if there is a token
         token: token,
         login: login,
         logout: logout,
@@ -94,9 +86,7 @@ function App() {
     >
       <Router>
         <Navbar />
-        <main>
-          {routes}
-        </main>
+        <main>{routes}</main>
         <Footer />
       </Router>
     </AuthContext.Provider>

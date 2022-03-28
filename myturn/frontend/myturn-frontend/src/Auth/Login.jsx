@@ -22,7 +22,7 @@ import axios from "axios";
 /* hooks */
 import React, { useState,useContext } from "react";
 /* import { useNavigate } from "react-router"; */
-import { useHistory } from "react-router-dom";
+import {useHistory} from 'react-router-dom';
 
 /* assets */
 import LogoBlanco from "../assets/LogoBlanco.png";
@@ -79,7 +79,7 @@ const Login = () => {
       .then( response => {
           console.log(response);
           setIsLoading(false);
-          /* TODO: modificar context para asignar logeo?? */
+          //TODO: REMOVE
           console.log(response.data.token)
           auth.login(response.data.token)
           /* navigate("/main"); */
@@ -94,14 +94,13 @@ const Login = () => {
   };
 
   return (
-    <Center mt="10vh" mb="50px">
+    <Center mt={["10vh","5vh"]} mb="50px">
       <Flex
         w="50%"
         h="70vh"
-        minH="600px"
+        minH="500px"
         minW="800px"
         maxW="1000px"
-        maxH="600px"
         bgColor={"cyan"}
         borderRadius="lg"
         boxShadow={
