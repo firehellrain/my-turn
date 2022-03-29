@@ -8,7 +8,8 @@ import {
   Button,
   Text,
   Image,
-  Heading
+  Heading,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { TriangleDownIcon } from "@chakra-ui/icons";
 import { FaSun, FaMoon } from "react-icons/fa";
@@ -24,12 +25,12 @@ const MotionTriangle = motion(TriangleDownIcon);
 
 const Navbar = () => {
   const auth = useContext(AuthContext);
-  /* const navigate = useNavigate(); */
   const history = useHistory();
 
   const [isDropped, setIsDropped] = useState(false);
 
   const { colorMode, toggleColorMode } = useColorMode();
+  const navbarBg = useColorModeValue('white','#1A202C');
 
   const dropDownController = useAnimation();
 
@@ -47,7 +48,7 @@ const Navbar = () => {
   };
 
   return (
-    <HStack p="3" spacing="4" borderBottomWidth="1px" bgColor={"white"} boxShadow={"rgba(0, 0, 0, 0.1) 0px 4px 12px;"}>
+    <HStack p="3" spacing="4" borderBottomWidth="1px" bgColor={navbarBg} boxShadow={"rgba(0, 0, 0, 0.1) 0px 4px 12px;"}>
       <Image src={logo} w="30px" ml="20px"/>
       <Heading fontSize={"2xl"}>MyTurn!</Heading>
       <Spacer />

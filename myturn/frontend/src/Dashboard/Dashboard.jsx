@@ -3,15 +3,13 @@ import {
   Heading,
   Button,
   Input,
-  useColorMode,
+  useColorModeValue,
   Text,
   HStack,
   Image,
 } from "@chakra-ui/react";
 import React from "react";
 
-import { AuthContext } from "../shared/context/auth-context";
-import { useContext } from "react";
 import { useHistory } from "react-router-dom";
 
 import { motion } from "framer-motion";
@@ -24,14 +22,16 @@ import MyTurnLogo from "../assets/MyTurnLogo.svg";
 const MotionButton = motion(Button);
 
 const Dashboard = () => {
-  const auth = useContext(AuthContext);
+
   const history = useHistory();
+
+  const borderColor = useColorModeValue('black','white');
 
   return (
     <HStack w="100%" justify="center" mb="80px" spacing="0" mt="10">
       <VStack spacing={5} maxWidth={"600px"}>
         <Image src={Illustration} w="60%" minWidth={"400px"} maxWidth="600px" />
-        <Heading borderBottomWidth="2px" pb="10px" borderColor={"secondary"}>
+        <Heading borderBottomWidth="2px" pb="10px" borderColor={borderColor}>
           Contecta con otros usuarios
         </Heading>
         <Text textAlign={"center"} fontSize="xl" w="60%">
@@ -53,10 +53,10 @@ const Dashboard = () => {
             bgColor={"primary"}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.9 }}
-            transition={{ duration: 0.05 }}
+            transition={{ duration: 0.025 }}
             fontSize="lg"
           >
-            Entrar {/*TODO: PONER ICONO */}
+            Entrar 
             <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faUsers} />
           </MotionButton>
         </VStack>
@@ -66,7 +66,7 @@ const Dashboard = () => {
         <Heading
           borderBottomWidth="2px"
           pb="10px"
-          borderColor={"secondary"}
+          borderColor={borderColor}
           pt="5vh"
         >
           Crea una reunión
@@ -88,8 +88,9 @@ const Dashboard = () => {
             bgColor={"primary"}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.9 }}
-            transition={{ duration: 0.05 }}
+            transition={{ duration: 0.025 }}
             fontSize="lg"
+            onClick={() => {history.push("/meet/1234")}}
           >
             Crear
             <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faPlus} />
