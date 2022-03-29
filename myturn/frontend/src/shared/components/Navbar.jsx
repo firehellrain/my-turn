@@ -7,14 +7,18 @@ import {
   Box,
   Button,
   Text,
+  Image,
+  Heading
 } from "@chakra-ui/react";
 import { TriangleDownIcon } from "@chakra-ui/icons";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { AuthContext } from "../context/auth-context";
 import { useContext, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
-/* import { useNavigate } from "react-router"; */
+
 import { useHistory } from "react-router-dom";
+
+import logo from '../../assets/logo.png'
 
 const MotionTriangle = motion(TriangleDownIcon);
 
@@ -44,6 +48,8 @@ const Navbar = () => {
 
   return (
     <HStack p="3" spacing="4" borderBottomWidth="1px">
+      <Image src={logo} w="30px" ml="20px"/>
+      <Heading fontSize={"2xl"}>MyTurn!</Heading>
       <Spacer />
       <IconButton
         bgColor={"transparent"}
