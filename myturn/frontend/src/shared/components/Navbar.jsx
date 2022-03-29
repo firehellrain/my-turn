@@ -47,7 +47,7 @@ const Navbar = () => {
   };
 
   return (
-    <HStack p="3" spacing="4" borderBottomWidth="1px">
+    <HStack p="3" spacing="4" borderBottomWidth="1px" bgColor={"white"} boxShadow={"rgba(0, 0, 0, 0.1) 0px 4px 12px;"}>
       <Image src={logo} w="30px" ml="20px"/>
       <Heading fontSize={"2xl"}>MyTurn!</Heading>
       <Spacer />

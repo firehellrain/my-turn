@@ -14,6 +14,7 @@ import Dashboard from "./Dashboard/Dashboard";
 import Footer from "./shared/components/Footer";
 import Navbar from "./shared/components/Navbar";
 import Meet from "./Meet/Meet";
+import Background from "./shared/components/Background";
 
 function App() {
   const [token, setToken] = useState(null);
@@ -85,9 +86,13 @@ function App() {
       }}
     >
       <Router>
+      <Background>
         <Navbar />
+        
         <main>{routes}</main>
+        
         <Footer />
+        </Background>
       </Router>
     </AuthContext.Provider>
   );

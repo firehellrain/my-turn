@@ -16,13 +16,13 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import  {FaEye,FaEyeSlash} from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 
 /* hooks */
-import React, { useState,useContext } from "react";
+import React, { useState, useContext } from "react";
 /* import { useNavigate } from "react-router"; */
-import {useHistory} from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 
 /* assets */
 import LogoBlanco from "../assets/LogoBlanco.png";
@@ -39,17 +39,16 @@ TODO: poner fondo con algunos colores
 const MotionImage = motion(Image);
 
 const Login = () => {
-
   const auth = useContext(AuthContext);
 
- /*  const navigate = useNavigate(); */
+  /*  const navigate = useNavigate(); */
   const history = useHistory();
 
   const leftBg = useColorModeValue("secondary", "secondary_dark");
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState(null);
-  const [loading,setIsLoading] = useState(false);
+  const [loading, setIsLoading] = useState(false);
   const [password, setPassword] = useState(null);
   const [username, setUsername] = useState(null);
 
@@ -71,34 +70,38 @@ const Login = () => {
     } else if (password && !username) {
       setError("Debes introducir un nombre de usuario para iniciar sesión");
     } else {
-      setIsLoading(true) //Start loading untill response
-      axios.post("http://localhost:8000/backend/api-token-auth/", {
-        username: username,
-        password: password,
-      })
-      .then( response => {
+      setIsLoading(true); //Start loading untill response
+      axios
+        .post("http://localhost:8000/backend/api-token-auth/", {
+          username: username,
+          password: password,
+        })
+        .then((response) => {
           console.log(response);
           setIsLoading(false);
           //TODO: REMOVE
-          console.log(response.data.token)
-          auth.login(response.data.token)
+          console.log(response.data.token);
+          auth.login(response.data.token);
           /* navigate("/main"); */
           history.push("main");
-      })
-      .catch(err => {
-        setIsLoading(false);
-        if(err.response) setError(err.response.statusText);
-          
-      })
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response) setError(err.response.statusText);
+        });
     }
   };
 
   return (
-    <Center mt={["10vh","5vh"]} mb="50px">
+    <Center
+      mt={["10vh", "5vh"]}
+      mb="50px"
+
+    >
       <Flex
         w="50%"
         h="70vh"
-        minH="500px"
+        minH="550px"
         minW="800px"
         maxW="1000px"
         bgColor={"cyan"}
@@ -145,30 +148,30 @@ const Login = () => {
               borderRadius="md"
               borderColor={"white"}
             />
+            <HStack pt="10">
+              <Box
+                w="3"
+                h="3"
+                cursor={"pointer"}
+                borderRadius={"100%"}
+                bgColor="whiteAlpha.700"
+              />
+              <Box
+                w="3"
+                h="3"
+                cursor={"pointer"}
+                borderRadius={"100%"}
+                bgColor="white"
+              />
+              <Box
+                w="3"
+                h="3"
+                cursor={"pointer"}
+                borderRadius={"100%"}
+                bgColor="whiteAlpha.700"
+              />
+            </HStack>
           </VStack>
-          <HStack>
-            <Box
-              w="3"
-              h="3"
-              cursor={"pointer"}
-              borderRadius={"100%"}
-              bgColor="whiteAlpha.700"
-            />
-            <Box
-              w="3"
-              h="3"
-              cursor={"pointer"}
-              borderRadius={"100%"}
-              bgColor="white"
-            />
-            <Box
-              w="3"
-              h="3"
-              cursor={"pointer"}
-              borderRadius={"100%"}
-              bgColor="whiteAlpha.700"
-            />
-          </HStack>
         </VStack>
 
         {/* Right box */}
@@ -229,18 +232,22 @@ const Login = () => {
                     onClick={() => {
                       setIsPasswordVisible(!isPasswordVisible);
                     }}
-                    icon={isPasswordVisible ? <FaEyeSlash/> : <FaEye/>}
+                    icon={isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
                     color="black"
                     bgColor={"gray.100"}
-                    _hover={{"bgColor":"gray.200"}}
+                    _hover={{ bgColor: "gray.200" }}
                   />
-                    
-                  
                 </InputRightElement>
               </InputGroup>
             </HStack>
           </Box>
-          <Button bgColor={"primary"} isLoading={loading} _hover={{"bgColor":"primary_hover"}} color="white" onClick={validateUserInput}>
+          <Button
+            bgColor={"primary"}
+            isLoading={loading}
+            _hover={{ bgColor: "primary_hover" }}
+            color="white"
+            onClick={validateUserInput}
+          >
             Iniciar Sesión
           </Button>{" "}
           {/* TODO: animación */}
