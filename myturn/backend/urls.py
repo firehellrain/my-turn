@@ -14,7 +14,7 @@ urlpatterns = [
     path('logout', views.logoutUser, name='logout'),
 
     # Comprueba si el usuario tiene una reunión creada
-    path('has_meet', views.user_has_meet, name='has_meet'),
+    path('user_has_meet', views.user_has_meet, name='user_has_meet'),
 
     # Accede a una reunión dado el código
     path('access_meet/<int:meeting_id>', views.access_meet, name='access_meet'),

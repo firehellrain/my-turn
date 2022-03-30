@@ -38,7 +38,7 @@ def access_meet(request, meeting_id):
         return Response(data, status=status.HTTP_200_OK)
     except: return response("El código de reunión no es válido", status.HTTP_400_BAD_REQUEST)
 
-@api_view(('GET',))
+@api_view(('POST',))
 @permission_classes([IsAuthenticated])
 def create_meet(request):
     """
