@@ -27,32 +27,44 @@ class MeetingConsumer(WebsocketConsumer):
     # Recibir mensaje del WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        request = text_data_json['request']
+        if request in text_data_json['request']:
+        
+            request = text_data_json['request']
 
-        if request == "get_turn_list":
+            if request == "get_turn_list":
+                async_to_sync(self.channel_layer.group_send)(
+                    self.meeting_code,
+                    {
+                        'type': request,
+                    }
+                )
+            elif request == "add_turn":
+                async_to_sync(self.channel_layer.group_send)(
+                    self.meeting_code,
+                    {
+                        'type': request,
+                        'turn_type': text_data_json['turn_type'],
+                        'user_token': text_data_json['token_key']
+                    }
+                )
+            elif request == "delete_turn":
+                async_to_sync(self.channel_layer.group_send)(
+                    self.meeting_code,
+                    {
+                        'type': request,
+                        'turn_id': text_data_json['turn_id'],
+                    }
+                )
+            elif request == "disconnect":
+                self.disconnect(0)
+        else:
             async_to_sync(self.channel_layer.group_send)(
-                self.meeting_code,
-                {
-                    'type': request,
-                }
-            )
-        elif request == "add_turn":
-            async_to_sync(self.channel_layer.group_send)(
-                self.meeting_code,
-                {
-                    'type': request,
-                    'turn_type': text_data_json['turn_type'],
-                    'user_token': text_data_json['token_key']
-                }
-            )
-        elif request == "delete_turn":
-            async_to_sync(self.channel_layer.group_send)(
-                self.meeting_code,
-                {
-                    'type': request,
-                    'turn_id': text_data_json['turn_id'],
-                }
-            )
+                    self.meeting_code,
+                    {
+                        'type': 'null'
+                    }
+                )
+            
 
     # Envia la lista de turnos al grupo
     def get_turn_list(self, event):
