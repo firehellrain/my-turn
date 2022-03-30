@@ -36,8 +36,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     auth.logout();
-    /* navigate("../"); */
-    history.push("/")
+    history.push("/") /* TODO: quizas hay que cambiar para que le de tiempo a deslogearse antes irse */
   };
 
   const handleDropDownClick = () => {

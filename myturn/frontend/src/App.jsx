@@ -4,7 +4,7 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
-
+import axios from "axios";
 import { AuthContext } from "./shared/context/auth-context";
 
 import React, { useEffect, useCallback, useState } from "react";
@@ -33,8 +33,34 @@ function App() {
   }, []);
 
   const logout = useCallback(() => {
+
+    const storedData = JSON.parse(localStorage.getItem("userData"));
+
+    let config = {
+      headers: {
+        Authorization: "Token " + storedData.token,
+      }
+    }
+
+    axios.get("http://localhost:8000/backend/logout",config)
+    .then(response => {
+      console.log(response.data);
+      setToken(null);
+      localStorage.removeItem("userData");
+      console.log("se ha deslogeado al usuario")
+    })
+    .catch(err => {
+      console.log(err);
+    })
+
+    
+    /* 
+    //LO INICIAL
     setToken(null);
-    localStorage.removeItem("userData");
+    localStorage.removeItem("userData"); */
+    
+   
+    
   }, []);
 
   useEffect(() => {

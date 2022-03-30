@@ -9,12 +9,13 @@ import {
   Image,
 } from "@chakra-ui/react";
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { AuthContext } from "../shared/context/auth-context";
 
 import Illustration from "../assets/dashboardImg.svg";
 import MyTurnLogo from "../assets/MyTurnLogo.svg";
@@ -23,36 +24,108 @@ import axios from "axios";
 const MotionButton = motion(Button);
 
 const Dashboard = () => {
-
   const history = useHistory();
-
+  const auth = useContext(AuthContext);
   const borderColor = useColorModeValue("black", "white");
 
   /* INPUT HANDLING FOR JOINING A MEET */
   const [code, setCode] = useState(null);
+  const [loadingAccessMeet, setLoadingAccessMeet] = useState(false);
+  const [errorMeetExists, setErrorMeetExists] = useState("");
 
-  const handleJoinMeet = (e) => {
+  const handleJoinMeetInput = (e) => {
     setCode(e.target.value);
   };
 
   const checkMeetExists = () => {
 
-    axios.post("http://localhost:8000/backend/api-token-auth/") //TODO: terminar de implementar
+  
 
-  }
+
+    setLoadingAccessMeet(true);
+
+    let config = {
+      headers: {
+        Authorization: "Token " + auth.token,
+      },
+    };
+
+
+    /* TODO: TEMPORAL */
+    /* axios.get(`http://localhost:8000/backend/user_has_meet/`, config)
+    .then(response => {
+      console.log("HAS MEET: " ,response.data);
+    })
+    .catch(err => {
+      console.log("has meet error: " , err);
+    }) */
+
+
+    axios
+      .get(`http://localhost:8000/backend/access_meet/${code}`, config)
+      .then((response) => {
+        /* console.log(response.data); */
+        setLoadingAccessMeet(false);
+        history.push(`/meet/${code}`);
+      })
+      .catch((err) => {
+        /* console.log(err.response.data); */
+        setLoadingAccessMeet(false);
+        if (err.response.status === 400) setErrorMeetExists(err.response.data);
+        else setErrorMeetExists("Algo ha ido mal");
+      });
+  };
 
   /* FETCHING FUNCTIONS */
-  const [meet, setMeet] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [meetName, setMeetName] = useState(null);
+  const [createdMeetCode, setCreatedMeetCode] = useState(null);
+  const [loadingCreateMeet, setLoadingCreateMeet] = useState(false);
+
+  const handleCreateMeetInput = (e) => {
+    setMeetName(e.target.value);
+  };
 
   const createMeet = () => {
-    setLoading(true);
+
+    setLoadingCreateMeet(true);
+    //el servidor me comprueba automaticamente si el usuario es moderador de alguna reunión
+    let config = {
+      headers: {
+        Authorization: "Token " + auth.token,
+      },
+    };
+
+    axios
+      .post(
+        `http://localhost:8000/backend/create_meet`,
+        { meetname: meetName },
+        config
+      )
+      .then((response) => {
+        console.log(response.data);
+        setLoadingCreateMeet(false);
+        /* TODO: redirigir a reunión si se ha podido crear */
+        /* history.push(`/meet/${code}`); */
+      })
+      .catch((err) => {
+        /* console.log(err.response.data); */
+        setLoadingAccessMeet(false);
+        /* if(err.response.status === 400) setErrorMeetExists(err.response.data);
+      else setErrorMeetExists("Algo ha ido mal"); */
+      });
   };
 
   return (
     <HStack w="100%" justify="center" mb="80px" spacing="0" mt="10">
       <VStack spacing={5} maxWidth={"600px"}>
-        <Image src={Illustration} w="60%" minWidth={"400px"} maxWidth="600px" draggable={false} userSelect="none"/>
+        <Image
+          src={Illustration}
+          w="60%"
+          minWidth={"400px"}
+          maxWidth="600px"
+          draggable={false}
+          userSelect="none"
+        />
         <Heading borderBottomWidth="2px" pb="10px" borderColor={borderColor}>
           Contecta con otros usuarios
         </Heading>
@@ -69,8 +142,10 @@ const Dashboard = () => {
             maxLength={4}
             borderColor="primary"
             borderWidth={"2px"}
-            onChange={handleJoinMeet}
+            onChange={handleJoinMeetInput}
+            isInvalid={errorMeetExists}
           />
+
           <MotionButton
             w="200px"
             bgColor={"primary"}
@@ -78,13 +153,17 @@ const Dashboard = () => {
             whileTap={{ scale: 0.9 }}
             transition={{ duration: 0.025 }}
             fontSize="lg"
-            onClick={() => {
-              history.push(`/meet/${code}`);
-            }}
+            onClick={checkMeetExists}
+            isLoading={loadingAccessMeet}
           >
             Entrar
             <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faUsers} />
           </MotionButton>
+          {errorMeetExists && (
+            <Text w="200px" textAlign={"center"} color="red.600">
+              {errorMeetExists}
+            </Text>
+          )}
         </VStack>
       </VStack>
 
@@ -108,6 +187,7 @@ const Dashboard = () => {
             maxLength={20}
             borderColor="primary"
             borderWidth={"2px"}
+            onChange={handleCreateMeetInput}
           />
           <MotionButton
             w="300px"
@@ -116,15 +196,20 @@ const Dashboard = () => {
             whileTap={{ scale: 0.9 }}
             transition={{ duration: 0.025 }}
             fontSize="lg"
-            onClick={() => {
-              history.push("/meet/1234");
-            }}
+            onClick={createMeet}
           >
             Crear
             <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faPlus} />
           </MotionButton>
         </VStack>
-        <Image w="60%" minWidth={"400px"} maxWidth="600px" src={MyTurnLogo} draggable={false} userSelect="none"/>
+        <Image
+          w="60%"
+          minWidth={"400px"}
+          maxWidth="600px"
+          src={MyTurnLogo}
+          draggable={false}
+          userSelect="none"
+        />
       </VStack>
     </HStack>
   );
