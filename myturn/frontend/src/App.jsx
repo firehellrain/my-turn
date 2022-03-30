@@ -86,12 +86,10 @@ function App() {
       }}
     >
       <Router>
-      <Background>
-        <Navbar />
-        
-        <main>{routes}</main>
-        
-        <Footer />
+        <Background>
+          <Navbar />
+          <main>{routes}</main>
+          <Footer />
         </Background>
       </Router>
     </AuthContext.Provider>

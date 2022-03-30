@@ -8,8 +8,8 @@ import {
   HStack,
   Image,
 } from "@chakra-ui/react";
-import React from "react";
 
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import { motion } from "framer-motion";
@@ -18,6 +18,7 @@ import { faUsers, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import Illustration from "../assets/dashboardImg.svg";
 import MyTurnLogo from "../assets/MyTurnLogo.svg";
+import axios from "axios";
 
 const MotionButton = motion(Button);
 
@@ -25,12 +26,33 @@ const Dashboard = () => {
 
   const history = useHistory();
 
-  const borderColor = useColorModeValue('black','white');
+  const borderColor = useColorModeValue("black", "white");
+
+  /* INPUT HANDLING FOR JOINING A MEET */
+  const [code, setCode] = useState(null);
+
+  const handleJoinMeet = (e) => {
+    setCode(e.target.value);
+  };
+
+  const checkMeetExists = () => {
+
+    axios.post("http://localhost:8000/backend/api-token-auth/") //TODO: terminar de implementar
+
+  }
+
+  /* FETCHING FUNCTIONS */
+  const [meet, setMeet] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const createMeet = () => {
+    setLoading(true);
+  };
 
   return (
     <HStack w="100%" justify="center" mb="80px" spacing="0" mt="10">
       <VStack spacing={5} maxWidth={"600px"}>
-        <Image src={Illustration} w="60%" minWidth={"400px"} maxWidth="600px" />
+        <Image src={Illustration} w="60%" minWidth={"400px"} maxWidth="600px" draggable={false} userSelect="none"/>
         <Heading borderBottomWidth="2px" pb="10px" borderColor={borderColor}>
           Contecta con otros usuarios
         </Heading>
@@ -47,6 +69,7 @@ const Dashboard = () => {
             maxLength={4}
             borderColor="primary"
             borderWidth={"2px"}
+            onChange={handleJoinMeet}
           />
           <MotionButton
             w="200px"
@@ -55,8 +78,11 @@ const Dashboard = () => {
             whileTap={{ scale: 0.9 }}
             transition={{ duration: 0.025 }}
             fontSize="lg"
+            onClick={() => {
+              history.push(`/meet/${code}`);
+            }}
           >
-            Entrar 
+            Entrar
             <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faUsers} />
           </MotionButton>
         </VStack>
@@ -90,13 +116,15 @@ const Dashboard = () => {
             whileTap={{ scale: 0.9 }}
             transition={{ duration: 0.025 }}
             fontSize="lg"
-            onClick={() => {history.push("/meet/1234")}}
+            onClick={() => {
+              history.push("/meet/1234");
+            }}
           >
             Crear
             <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faPlus} />
           </MotionButton>
         </VStack>
-        <Image w="60%" minWidth={"400px"} maxWidth="600px" src={MyTurnLogo} />
+        <Image w="60%" minWidth={"400px"} maxWidth="600px" src={MyTurnLogo} draggable={false} userSelect="none"/>
       </VStack>
     </HStack>
   );

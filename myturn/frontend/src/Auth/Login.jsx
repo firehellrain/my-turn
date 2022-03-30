@@ -80,9 +80,9 @@ const Login = () => {
           console.log(response);
           setIsLoading(false);
           //TODO: REMOVE
-          console.log(response.data.token);
+          /* console.log(response.data.token); */
           auth.login(response.data.token);
-          /* navigate("/main"); */
+          
           history.push("main");
         })
         .catch((err) => {
