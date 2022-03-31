@@ -48,8 +48,10 @@ const Navbar = () => {
 
   return (
     <HStack p="3" spacing="4" borderBottomWidth="1px" bgColor={navbarBg} boxShadow={"rgba(0, 0, 0, 0.1) 0px 4px 12px;"}>
+      <HStack spacing="5" onClick={() => {history.push("/main")}} cursor="pointer">
       <Image src={logo} w="30px" ml="20px"/>
       <Heading fontSize={"2xl"}>MyTurn!</Heading>
+      </HStack>
       <Spacer />
       <IconButton
         bgColor={"transparent"}
