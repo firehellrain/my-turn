@@ -44,7 +44,7 @@ const Dashboard = () => {
     axios
       .get(`http://localhost:8000/backend/user_has_meet`, config)
       .then((response) => {
-        console.log("HAS MEET: ", response.data);
+        /* console.log("HAS MEET: ", response.data); */
         setUserHasMeet(true);
         setCode(response.data.meeting.meeting_id);
       })
@@ -93,14 +93,24 @@ const Dashboard = () => {
 
   /* FETCHING FUNCTIONS */
   const [meetName, setMeetName] = useState(null);
-  const [createdMeetCode, setCreatedMeetCode] = useState(null);
   const [loadingCreateMeet, setLoadingCreateMeet] = useState(false);
+  const [errorCreateMeet,setErrorCreateMeet] = useState("");
 
   const handleCreateMeetInput = (e) => {
     setMeetName(e.target.value);
   };
 
   const createMeet = () => {
+
+    if(!meetName){
+      setErrorCreateMeet("¡Debes introducir un nombre de reunión!");
+      return;
+    }
+    else if(meetName.trim().length < 1){ //validador de nombre de reunión
+      setErrorCreateMeet("Introduce un nombre válido porfavor");
+      return;
+    }
+
     setLoadingCreateMeet(true);
     //el servidor me comprueba automaticamente si el usuario es moderador de alguna reunión
     let config = {
@@ -117,15 +127,17 @@ const Dashboard = () => {
       )
       .then((response) => {
         console.log(response.data);
+        setCode(response.data.meeting.meeting_id)
         setLoadingCreateMeet(false);
-        /* TODO: redirigir a reunión si se ha podido crear */
-        /* history.push(`/meet/${code}`); */
+        // redirigir a la reunión si se ha podido crear
+        history.push(`/meet/${response.data.meeting.meeting_id}`);
       })
       .catch((err) => {
-        /* console.log(err.response.data); */
-        setLoadingAccessMeet(false);
-        /* if(err.response.status === 400) setErrorMeetExists(err.response.data);
-      else setErrorMeetExists("Algo ha ido mal"); */
+
+        setLoadingCreateMeet(false);
+        //filtramos según el código de error
+        if(err.response.status === 400) setErrorCreateMeet("¡Ya eres moderador de una reunión!");
+        else setErrorCreateMeet("Algo ha ido mal");
       });
   };
 
@@ -222,6 +234,7 @@ const Dashboard = () => {
             borderColor="primary"
             borderWidth={"2px"}
             onChange={handleCreateMeetInput}
+            isInvalid={errorCreateMeet}
           />
           <MotionButton
             w="300px"
@@ -231,10 +244,16 @@ const Dashboard = () => {
             transition={{ duration: 0.025 }}
             fontSize="lg"
             onClick={createMeet}
+            isLoading={loadingCreateMeet}
           >
             Crear
             <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faPlus} />
           </MotionButton>
+          {errorCreateMeet && (
+            <Text w="250px" textAlign={"center"} color="red.600">
+              {errorCreateMeet}
+            </Text>
+          )}
         </VStack>
         <Image
           w="60%"

@@ -1,75 +1,57 @@
-import { Heading, HStack, Spacer } from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-
 /* HOOKS */
-import { useParams, useHistory } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useEffect, useState,useContext } from "react";
+
+/* OTHERS */
 import axios from "axios";
+import { AuthContext } from "../shared/context/auth-context";
 import MeetNotFound from "./components/MeetNotFound";
 import Loading from "./components/Loading";
+import MeetLayout from "./components/MeetLayout";
 
 const Meet = () => {
   const { mid } = useParams();
-  const history = useHistory();
+  const auth = useContext(AuthContext);
+  
 
   /* CHECK IF MEETING EXISTS */
-  const [meetExists, setMeetExists] = useState(false); 
-  const [loadingMeetExists, setLoadingMeetExists] = useState(true); 
+  const [meetData, setMeetData] = useState(null);
+  const [loadingMeetExists, setLoadingMeetExists] = useState(true);
 
-  /* useEffect(() => {
+  useEffect(() => {
     //when page is refreshed
+
+    let config = {
+      headers: {
+        Authorization: "Token " + auth.token,
+      },
+    };
+
     axios
-      .post("http://localhost:8000/backend/CAMBIAR/")
-      .then((response) => {})
+      .get(`http://localhost:8000/backend/access_meet/${mid}`,config)
+      .then((response) => {
+        setMeetData(response.data.meeting);
+        setLoadingMeetExists(false);
+        
+      })
       .catch((err) => {
         setLoadingMeetExists(false);
-        setMeetExists(false);
+        setMeetData(null);
       });
-  }, []); */
+  }, []);
 
-  /* USER LEAVE */
-  const handleUserLeave = () => {
-    //TODO: implementar lógica del servidor
-    //TODO: maybe poner are you sure you want to leave?
-    history.push("/main");
-  };
 
-  console.log(mid);
 
   if (loadingMeetExists) {
-    return <Loading/>;
+    return <Loading />;
   } else {
-
-    if (!meetExists) {
-       return (<MeetNotFound/>)
+    if (!!meetData) { //meet exists
+      return <MeetLayout meet={meetData}/>;
     } else {
-      //meet exists
-      return (
-        <HStack p="5">
-          <Heading
-            color="black"
-            fontSize={"2xl"}
-            cursor="pointer"
-            userSelect={"none"}
-            onClick={handleUserLeave}
-          >
-            <FontAwesomeIcon
-              icon={faArrowLeft}
-              style={{ marginRight: "10px" }}
-            />
-            Abandonar reunión
-          </Heading>
-          <Spacer />
-          <Heading color="black" fontSize={"2xl"}>
-            Código de la reunión: {mid}
-          </Heading>
-        </HStack>
-      );
+      return <MeetNotFound />;
+      
     }
   }
-
-
 };
 
 export default Meet;

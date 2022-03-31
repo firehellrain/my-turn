@@ -1,14 +1,17 @@
 import { Box } from "@chakra-ui/react";
-import React from "react";
+import { useLocation } from "react-router";
 
 import Fondo from "../../assets/Fondo.svg";
 
 const Background = props => {
+
+  const location = useLocation();
+
   return (
     <Box
       h="100vh"
       backgroundSize={"cover"}
-      bgImage={Fondo}
+      bgImage={!location.pathname.startsWith("/meet") && Fondo} 
       backgroundPosition="center center"
       backgroundAttachment={"fixed"}
       overflow="auto"

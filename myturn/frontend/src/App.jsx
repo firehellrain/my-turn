@@ -42,6 +42,7 @@ function App() {
       }
     }
 
+    //TODO: Y SI HAY ERROR DE CONEXIÓN ? 
     axios.get("http://localhost:8000/backend/logout",config)
     .then(response => {
       console.log(response.data);
