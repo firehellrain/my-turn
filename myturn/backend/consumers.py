@@ -27,9 +27,9 @@ class MeetingConsumer(WebsocketConsumer):
     # Recibir mensaje del WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        if request in text_data_json['request']:
+        request = text_data_json['request']
         
-            request = text_data_json['request']
+        if request in text_data_json['request']:
 
             if request == "get_turn_list":
                 async_to_sync(self.channel_layer.group_send)(
