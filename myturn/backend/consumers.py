@@ -26,10 +26,10 @@ class MeetingConsumer(WebsocketConsumer):
     # Recibir mensaje del WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        request = text_data_json['request']
-        
-        if request in text_data_json['request']:
 
+        try:
+            request = text_data_json['request']
+        
             if request == "get_turn_list":
                 async_to_sync(self.channel_layer.group_send)(
                     self.meeting_code,
@@ -42,7 +42,8 @@ class MeetingConsumer(WebsocketConsumer):
                     self.meeting_code,
                     {
                         'type': request,
-                        'turn_type': text_data_json['turn_type']
+                        'turn_type': text_data_json['turn_type'],
+                        'user_token': text_data_json['token_key']
                     }
                 )
             elif request == "delete_turn":
@@ -55,13 +56,10 @@ class MeetingConsumer(WebsocketConsumer):
                 )
             elif request == "disconnect":
                 self.disconnect(0)
-        else:
-            async_to_sync(self.channel_layer.group_send)(
-                    self.meeting_code,
-                    {
-                        'type': 'null'
-                    }
-                )
+        except:
+            self.send(text_data=json.dumps({
+                'error': 'Peticion denegada, algo salio mal.'
+            }))
             
 
     # Envia la lista de turnos al grupo
