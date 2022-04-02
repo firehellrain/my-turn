@@ -1,10 +1,11 @@
 import json
 from channels.generic.websocket import WebsocketConsumer
-from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import AnonymousUser
 from asgiref.sync import async_to_sync
 from .models import Meeting, MeetingUserList
 from django.contrib.auth.models import User
+
+from .views.aux_funcs import user_not_verified, verify_user
 
 class MeetingConsumer(WebsocketConsumer):
 
@@ -71,14 +72,12 @@ class MeetingConsumer(WebsocketConsumer):
                 'error': 'Peticion denegada, algo salio mal.'
             }))
             
-
-    # Envia la lista de turnos al grupo
     def get_turn_list(self, event):
         """ 
             Solicita la lista de turnos de una reunión.
             Se asume que la reunión dada siempre va a existir.
         """
-        user = self.verify_user(event['token_key'])
+        user = verify_user(self, event['token_key'])
 
         if user.is_authenticated:
             if self.user.is_anonymous:
@@ -88,7 +87,7 @@ class MeetingConsumer(WebsocketConsumer):
                 'turn_list': list(self.meeting.turn_set.all().values()),
             }))
         else:
-            self.user_not_verified()
+            user_not_verified(self)
     
     def get_user_list(self, event):
         """ 
@@ -106,7 +105,7 @@ class MeetingConsumer(WebsocketConsumer):
                 'user_list': username_list
             }))
         else:
-            self.user_not_verified()
+            user_not_verified(self)
 
     def add_turn(self, event):
         """ 
@@ -126,7 +125,7 @@ class MeetingConsumer(WebsocketConsumer):
                     'error': 'El usuario ya tiene un turno pedido.',
                 }))
         else:
-            self.user_not_verified()
+            user_not_verified(self)
 
     def delete_turn(self, event):
         """ 
@@ -140,28 +139,10 @@ class MeetingConsumer(WebsocketConsumer):
                 'turn_list': list(self.meeting.turn_set.all().values()),
             }))
         else:
-            self.user_not_verified()
-    
-    def user_not_verified(self):
-        """
-            Devuelve un mensaje de error indicando que
-            el usuario no ha sido verificado correctamente
-        """
-        self.send(text_data=json.dumps({
-            'error': 'El usuario no ha sido identificado',
-        }))
+            user_not_verified(self)
 
-    def verify_user(self, token_key):
-        """
-            Comprueba si el token de verificación es válido.
-            En caso afirmativo, devuelve los datos del usuario.
-            En caso contrario, devuelve un usuario anónimo.
-        """
-        try:
-            token = Token.objects.get(key=token_key)
-            return token.user
-        except Token.DoesNotExist:
-            return AnonymousUser()
+    
+    
    
 
     
