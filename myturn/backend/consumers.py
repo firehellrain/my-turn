@@ -3,7 +3,7 @@ from channels.generic.websocket import WebsocketConsumer
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import AnonymousUser
 from asgiref.sync import async_to_sync
-from .models import Meeting
+from .models import Meeting, MeetingUserList
 
 class MeetingConsumer(WebsocketConsumer):
 
@@ -76,6 +76,8 @@ class MeetingConsumer(WebsocketConsumer):
         if user.is_authenticated:
             if self.user.is_anonymous:
                 self.user = user
+                self.connexion = MeetingUserList(meeting_id=self.meeting, user=self.user)
+                self.connexion.save()
             self.send(text_data=json.dumps({
                 'turn_list': list(self.meeting.turn_set.all().values()),
             }))
