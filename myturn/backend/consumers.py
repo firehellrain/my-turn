@@ -10,7 +10,8 @@ class MeetingConsumer(WebsocketConsumer):
     def connect(self):
         self.meeting_code = self.scope['url_route']['kwargs']['meeting_id']
         self.meeting = Meeting.objects.get(meeting_id=self.meeting_code)
-        
+        self.user = AnonymousUser()
+
         # Unirse a la reunión
         async_to_sync(self.channel_layer.group_add)(
             self.meeting_code,
@@ -46,7 +47,6 @@ class MeetingConsumer(WebsocketConsumer):
                     {
                         'type': request,
                         'turn_type': text_data_json['turn_type'],
-                        'token_key': text_data_json['token_key']
                     }
                 )
             elif request == "delete_turn":
@@ -55,7 +55,6 @@ class MeetingConsumer(WebsocketConsumer):
                     {
                         'type': request,
                         'turn_id': text_data_json['turn_id'],
-                        'token_key': text_data_json['token_key']
                     }
                 )
             elif request == "disconnect":
@@ -72,7 +71,11 @@ class MeetingConsumer(WebsocketConsumer):
             Solicita la lista de turnos de una reunión.
             Se asume que la reunión dada siempre va a existir.
         """
-        if self.verify_user(event['token_key']).is_authenticated:
+        user = self.verify_user(event['token_key'])
+
+        if user.is_authenticated:
+            if self.user.is_anonymous:
+                self.user = user
             self.send(text_data=json.dumps({
                 'turn_list': list(self.meeting.turn_set.all().values()),
             }))
@@ -86,11 +89,9 @@ class MeetingConsumer(WebsocketConsumer):
             devuelve un aviso de error.
         """
 
-        user = self.verify_user(event['token_key'])
-
-        if user.is_authenticated:
+        if self.user.is_authenticated:
             try:
-                self.meeting.turn_set.create(turn_type=event['turn_type'], turn_user=user)
+                self.meeting.turn_set.create(turn_type=event['turn_type'], turn_user=self.user)
                 self.send(text_data=json.dumps({
                     'turn_list': list(self.meeting.turn_set.all().values()),
                 }))
@@ -107,9 +108,7 @@ class MeetingConsumer(WebsocketConsumer):
             ¿Comprobar si es moderador?
         """
 
-        user = self.verify_user(event['token_key'])
-
-        if user.is_authenticated:
+        if self.user.is_authenticated:
             self.meeting.turn_set.filter(pk=event['turn_id']).delete()
             self.send(text_data=json.dumps({
                 'turn_list': list(self.meeting.turn_set.all().values()),
