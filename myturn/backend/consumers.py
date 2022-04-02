@@ -1,7 +1,6 @@
 import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
-from rest_framework.authtoken.models import Token
 from .models import Meeting
 
 class MeetingConsumer(WebsocketConsumer):
@@ -43,8 +42,7 @@ class MeetingConsumer(WebsocketConsumer):
                     self.meeting_code,
                     {
                         'type': request,
-                        'turn_type': text_data_json['turn_type'],
-                        'user_token': text_data_json['token_key']
+                        'turn_type': text_data_json['turn_type']
                     }
                 )
             elif request == "delete_turn":
@@ -74,9 +72,7 @@ class MeetingConsumer(WebsocketConsumer):
 
     def add_turn(self, event):
         try:
-            token = Token.objects.get(key=event['token_key'])
-            meeting = Meeting.objects.get(meeting_id=self.meeting)
-            meeting.turn_set.create(turn_type=event['turn_type'], turn_user=token.user)
+            self.meeting.turn_set.create(turn_type=event['turn_type'], turn_user=self.scope['user'])
             self.send(text_data=json.dumps({
             'turn_list': list(self.meeting.turn_set.all().values()),
         }))
