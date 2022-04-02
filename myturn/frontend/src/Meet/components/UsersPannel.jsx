@@ -13,8 +13,6 @@ const UsersPannel = () => {
   /* LEAVE BUTTON LOGIC */
   const handleUserLeave = () => {};
 
-  /* DELETE MEETING LOGIC */
-  const handleDeleteMeet = () => {};
 
   return (
     <Box
