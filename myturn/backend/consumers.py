@@ -4,6 +4,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import AnonymousUser
 from asgiref.sync import async_to_sync
 from .models import Meeting, MeetingUserList
+from django.contrib.auth.models import User
 
 class MeetingConsumer(WebsocketConsumer):
 
@@ -21,6 +22,7 @@ class MeetingConsumer(WebsocketConsumer):
         self.accept()
     
     def disconnect(self, close_code):
+        MeetingUserList.objects.filter(user=self.user).delete()
         async_to_sync(self.channel_layer.group_discard)(
             self.meeting_code,
             self.channel_name
@@ -41,6 +43,13 @@ class MeetingConsumer(WebsocketConsumer):
                         'token_key': text_data_json['token_key']
                     }
                 )
+            if request == "get_user_list":
+                async_to_sync(self.channel_layer.group_send)(
+                    self.meeting_code,
+                    {
+                        'type': request,
+                    }
+                )
             elif request == "add_turn":
                 async_to_sync(self.channel_layer.group_send)(
                     self.meeting_code,
@@ -57,8 +66,6 @@ class MeetingConsumer(WebsocketConsumer):
                         'turn_id': text_data_json['turn_id'],
                     }
                 )
-            elif request == "disconnect":
-                self.disconnect(0)
         except:
             self.send(text_data=json.dumps({
                 'error': 'Peticion denegada, algo salio mal.'
@@ -76,10 +83,27 @@ class MeetingConsumer(WebsocketConsumer):
         if user.is_authenticated:
             if self.user.is_anonymous:
                 self.user = user
-                self.connexion = MeetingUserList(meeting_id=self.meeting, user=self.user)
-                self.connexion.save()
+                self.connexion = MeetingUserList.objects.create(meeting_id=self.meeting, user=self.user)
             self.send(text_data=json.dumps({
                 'turn_list': list(self.meeting.turn_set.all().values()),
+            }))
+        else:
+            self.user_not_verified()
+    
+    def get_user_list(self, event):
+        """ 
+            Solicita la lista de usuarios de una reunión.
+            Se asume que la reunión dada siempre va a existir.
+        """
+        user_list = MeetingUserList.objects.filter(meeting_id=self.meeting).values_list('user', flat=True)
+        username_list = {}
+
+        for u in user_list:
+            username_list[u] = User.objects.get(pk=u).first_name + " " + User.objects.get(pk=u).last_name
+
+        if self.user.is_authenticated:
+            self.send(text_data=json.dumps({
+                'user_list': username_list
             }))
         else:
             self.user_not_verified()
