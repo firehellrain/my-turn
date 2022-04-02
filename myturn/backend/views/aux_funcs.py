@@ -14,7 +14,7 @@ def response(text, code):
 
 def generate_unique_meeting():
     """ 
-        Devuelve un código de reunión único 
+        Devuelve un código de reunión único con cuatro dígitos
     """
     while True:
         code = randint(1111, 9999)
