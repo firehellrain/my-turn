@@ -16,3 +16,10 @@ class Turn(models.Model):
 
     def __str__(self):
         return self.turn_type + ", " + self.turn_user.username
+
+class MeetingUserList(models.Model):
+    meeting_id = models.ForeignKey(Meeting, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.meeting_id) + ", " + self.user.username
