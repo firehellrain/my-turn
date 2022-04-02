@@ -67,6 +67,14 @@ class MeetingConsumer(WebsocketConsumer):
                         'turn_id': text_data_json['turn_id'],
                     }
                 )
+            elif request == "change_mod":
+                async_to_sync(self.channel_layer.group_send)(
+                    self.meeting_code,
+                    {
+                        'type': request,
+                        'new_mod': text_data_json['new_mod'],
+                    }
+                )
         except:
             self.send(text_data=json.dumps({
                 'error': 'Peticion denegada, algo salio mal.'
@@ -94,13 +102,13 @@ class MeetingConsumer(WebsocketConsumer):
             Solicita la lista de usuarios de una reunión.
             Se asume que la reunión dada siempre va a existir.
         """
-        user_list = MeetingUserList.objects.filter(meeting_id=self.meeting).values_list('user', flat=True)
-        username_list = {}
-
-        for u in user_list:
-            username_list[u] = User.objects.get(pk=u).first_name + " " + User.objects.get(pk=u).last_name
-
         if self.user.is_authenticated:
+            user_list = MeetingUserList.objects.filter(meeting_id=self.meeting).values_list('user', flat=True)
+            username_list = {}
+
+            for u in user_list:
+                username_list[u] = User.objects.get(pk=u).first_name + " " + User.objects.get(pk=u).last_name
+
             self.send(text_data=json.dumps({
                 'user_list': username_list
             }))
@@ -141,7 +149,35 @@ class MeetingConsumer(WebsocketConsumer):
         else:
             user_not_verified(self)
 
-    
+    def change_mod(self, event):
+        """ 
+            Cambia al moderador de la reunión por el usuario indicado por el mismo.
+            Si el usuario solicitante no es moderador o
+            el nuevo usuario ya es moderador en otra reunión,
+            devuelve un mensaje de error.
+        """
+
+        if self.user.is_authenticated:
+            if self.meeting.meeting_mod == self.user:
+                
+                new_mod = User.objects.get(pk=event['new_mod'])
+
+                if not Meeting.objects.filter(meeting_mod=new_mod).exists():
+                    self.meeting.meeting_mod = new_mod
+                    self.meeting.save()
+                    self.send(text_data=json.dumps({
+                        'turn_list': list(self.meeting.turn_set.all().values()),
+                    }))
+                else: 
+                    self.send(text_data=json.dumps({
+                        'error': "El usuario ya es moderador de una reunión",
+                    }))
+            else:
+                self.send(text_data=json.dumps({
+                    'error': "El usuario solicitante no es moderador de la reunión",
+                }))
+        else:
+            user_not_verified(self)
     
    
 
