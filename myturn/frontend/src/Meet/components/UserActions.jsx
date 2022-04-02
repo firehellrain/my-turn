@@ -1,4 +1,4 @@
-import { Grid, Button, VStack, GridItem } from "@chakra-ui/react";
+import { Grid, Button, VStack, GridItem, Spacer } from "@chakra-ui/react";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
 
@@ -34,31 +34,30 @@ const UserActions = () => {
     <VStack
       w="100%"
       h="100%"
-      maxWidth={"400px"}
       borderLeftWidth="1px"
       minWidth={"300px"}
       textAlign="center"
       p="5"
-      spacing="500px"
+      pb="20"
     >
         {/* GRID DE ACCIONES DE REUNIÓN */}
       <Grid templateColumns={"1fr 1fr"} templateRows={"1fr 1fr"} w="auto" gap="2" mt="10">
         <GridItem colSpan={1} rowSpan={1} colStart={1} rowStart={1}>
-            <Button borderRadius={"md"} h="100px" w="100px" colorScheme={"blue"}>Algo</Button>
+            <Button borderRadius={"md"} h="100px" w="100px" colorScheme={"blue"}>Turno1</Button>
         </GridItem>
         <GridItem colSpan={1} rowSpan={1} colStart={2} rowStart={1}>
-            <Button borderRadius={"md"} h="100px" w="100px" colorScheme={"blue"}>Algo</Button>
+            <Button borderRadius={"md"} h="100px" w="100px" colorScheme={"blue"}>Turno2</Button>
         </GridItem>
         <GridItem colSpan={1} rowSpan={1} colStart={1} rowStart={2}>
-            <Button borderRadius={"md"} h="100px" w="100px" colorScheme={"blue"}>Algo</Button>
+            <Button borderRadius={"md"} h="100px" w="100px" colorScheme={"blue"}>Turno3</Button>
         </GridItem>
         <GridItem colSpan={1} rowSpan={1} colStart={2} rowStart={2}>
-            <Button borderRadius={"md"} h="100px" w="100px" colorScheme={"blue"}>Algo</Button>
+            <Button borderRadius={"md"} h="100px" w="100px" colorScheme={"blue"}>Turno4</Button>
         </GridItem>
       </Grid>
 
-
-      <Button colorScheme={"orange"} w="210px" onClick={handleEndMeeting}>Terminar reunión</Button>
+      <Spacer/>
+      <Button  colorScheme={"orange"} w="210px" onClick={handleEndMeeting}>Terminar reunión</Button>
     </VStack>
   );
 };
