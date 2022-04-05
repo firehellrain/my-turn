@@ -14,4 +14,11 @@ class MeetingAdmin(admin.ModelAdmin):
     ]
     inlines = [TurnInLine]
 
+class MeetingUserListAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Meeting ID', {'fields': ['meeting_id']}),
+        ('User', {'fields':['user']}),
+    ]
+
 admin.site.register(Meeting, MeetingAdmin)
+admin.site.register(MeetingUserList, MeetingUserListAdmin)

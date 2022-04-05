@@ -14,7 +14,7 @@ urlpatterns = [
     path('logout', views.logoutUser, name='logout'),
 
     # Comprueba si el usuario tiene una reunión creada
-    path('has_meet', views.user_has_meet, name='has_meet'),
+    path('user_has_meet', views.user_has_meet, name='user_has_meet'),
 
     # Accede a una reunión dado el código
     path('access_meet/<int:meeting_id>', views.access_meet, name='access_meet'),
@@ -24,17 +24,5 @@ urlpatterns = [
 
     # Borra la reunión del usuario
     path('delete_meet', views.delete_meet, name='delete_meet'),
-
-    # Solicita la lista de turnos de la reunión dada
-    path('get_turn_list/<int:meeting_id>', views.get_turn_list, name='get_turn_list'),
-
-    # Solicita un turno del tipo dado por el usuario
-    path('request_turn/<int:meeting_id>', views.request_turn, name='request_turn'),
-
-    # Elimina el turno que el usuario haya solicitado
-    path('delete_turn/<int:meeting_id>', views.delete_turn, name='delete_turn'),
-
-    # Cambia al moderador de la reunión actual
-    path('change_mod', views.change_mod, name='change_mod'),
 
 ]

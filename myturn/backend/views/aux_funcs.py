@@ -2,6 +2,9 @@ from django.http import HttpResponse
 from random import randint
 from backend.models import Meeting
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import AnonymousUser
+import json
 
 def response(text, code):
     """
@@ -14,7 +17,7 @@ def response(text, code):
 
 def generate_unique_meeting():
     """ 
-        Devuelve un código de reunión único 
+        Devuelve un código de reunión único con cuatro dígitos
     """
     while True:
         code = randint(1111, 9999)
@@ -33,3 +36,24 @@ def create_user(name, pw):
         Crea un usuario con el nombre y la contraseña dados
     """
     return User.objects.create_user(username=name, password=pw)
+
+def user_not_verified(self):
+    """
+        Devuelve un mensaje de error indicando que
+        el usuario no ha sido verificado correctamente
+    """
+    self.send(text_data=json.dumps({
+        'error': 'El usuario no ha sido identificado',
+    }))
+
+def verify_user(self, token_key):
+    """
+        Comprueba si el token de verificación es válido.
+        En caso afirmativo, devuelve los datos del usuario.
+        En caso contrario, devuelve un usuario anónimo.
+    """
+    try:
+        token = Token.objects.get(key=token_key)
+        return token.user
+    except Token.DoesNotExist:
+        return AnonymousUser()
