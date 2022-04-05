@@ -33,7 +33,6 @@ import { AuthContext } from "../shared/context/auth-context";
 /* 
 TODO: cambiar color de boton de inicio de sesión
 TODO: poner slider con distinta info
-TODO: poner fondo con algunos colores
 */
 
 const MotionImage = motion(Image);

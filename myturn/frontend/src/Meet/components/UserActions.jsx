@@ -1,4 +1,4 @@
-import { Grid, Button, VStack, GridItem, Spacer } from "@chakra-ui/react";
+import { Grid, Button, VStack, GridItem, Spacer, Heading } from "@chakra-ui/react";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
 
@@ -7,12 +7,12 @@ import { useContext } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const UserActions = () => {
-
-    const auth = useContext(AuthContext);
-    const history = useHistory();
+  const auth = useContext(AuthContext);
+  const history = useHistory();
 
   /* END MEETING LOGIC */
   const handleEndMeeting = () => {
+    /* SOLO MODERADOR */
     let config = {
       headers: {
         Authorization: "Token " + auth.token,
@@ -40,24 +40,27 @@ const UserActions = () => {
       p="5"
       pb="20"
     >
-        {/* GRID DE ACCIONES DE REUNIÓN */}
-      <Grid templateColumns={"1fr 1fr"} templateRows={"1fr 1fr"} w="auto" gap="2" mt="10">
-        <GridItem colSpan={1} rowSpan={1} colStart={1} rowStart={1}>
-            <Button borderRadius={"md"} h="100px" w="100px" colorScheme={"blue"}>Turno1</Button>
-        </GridItem>
-        <GridItem colSpan={1} rowSpan={1} colStart={2} rowStart={1}>
-            <Button borderRadius={"md"} h="100px" w="100px" colorScheme={"blue"}>Turno2</Button>
-        </GridItem>
-        <GridItem colSpan={1} rowSpan={1} colStart={1} rowStart={2}>
-            <Button borderRadius={"md"} h="100px" w="100px" colorScheme={"blue"}>Turno3</Button>
-        </GridItem>
-        <GridItem colSpan={1} rowSpan={1} colStart={2} rowStart={2}>
-            <Button borderRadius={"md"} h="100px" w="100px" colorScheme={"blue"}>Turno4</Button>
-        </GridItem>
-      </Grid>
+      <Heading fontSize={"2xl"}>Elige tu turno</Heading>
+      <Button
+        boxShadow={
+          "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
+        }
+        colorScheme={"blue"}
+        h="50px"
+        w="210px"
+      ></Button>
 
-      <Spacer/>
-      <Button  colorScheme={"orange"} w="210px" onClick={handleEndMeeting}>Terminar reunión</Button>
+      <Spacer />
+      <Button
+        boxShadow={
+          "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
+        }
+        colorScheme={"orange"}
+        w="210px"
+        onClick={handleEndMeeting}
+      >
+        Terminar reunión
+      </Button>
     </VStack>
   );
 };

@@ -24,7 +24,7 @@ const UsersPannel = () => {
       minWidth={"300px"}
       textAlign="center"
     >
-      <Button mt="5" variant="outline" borderWidth={"3px"} colorScheme={"red"} w="200px">
+      <Button mt="5" fontSize={"xl"} variant="ghost" borderWidth={"3px"} colorScheme={"red"} w="200px">
         <FontAwesomeIcon icon={faArrowLeft} style={{"marginRight":"10px"}}/>Abandonar
       </Button>
       <Heading fontSize={"2xl"} mt="5" mb="5vh">

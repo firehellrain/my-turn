@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Grid, GridItem } from "@chakra-ui/react";
 import UsersPannel from './UsersPannel';
-import Turns from './Turns';
+import Turns from './Turns/Turns';
 import UserActions from './UserActions';
 import { AuthContext } from '../../shared/context/auth-context';
 /* HOOKS */
@@ -22,16 +22,16 @@ const MeetLayout = ({meet}) => {
 
   const ws = new WebSocket(`ws://localhost:8000/ws/join_meet/${mid}`);
   //al refrescar, cogemos los turnos actuales
-/* 
-  const identifierCall = {
+
+  /* const identifierCall = {
     data:{resquest: "get_turn_list",token_key:auth.token }
   }
 
 
   ws.onopen = (event) => {
     ws.send(identifierCall);
-  }
- */
+  } */
+ 
 
 
    /* USER LEAVE */

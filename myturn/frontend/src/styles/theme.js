@@ -12,6 +12,8 @@ const colors = {
     secondary: "#16365B",
     secondary_dark:"#183754",
 
+    primaryGlass:"rgba(0,172,201,0.8)",
+
     footer:"#00ACC9"
 }
 
