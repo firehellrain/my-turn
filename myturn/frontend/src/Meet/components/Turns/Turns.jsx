@@ -19,14 +19,8 @@ const Turns = ({ title }) => {
       <Heading whiteSpace={"nowrap"}>{title}</Heading>
         <Box bgColor={textColor} h="2px"  w="50%"/>
       </HStack>
-      <VStack w="100%" overflowY="auto" maxHeight={"75vh"} pb="50px">
+      <VStack w="100%" overflowY="auto" overflowX={"hidden"} maxHeight={"75vh"} pb="50px">
         <TurnCard isLeft name="Suavemente" text="Suavemente, besame, que quiero sentir tus labios"/>
-        <TurnCard name="Jose Ramirez" text="Ha solicitado un turno"/>
-        <TurnCard isLeft name="Jose Ramirez" text="Ha solicitado un turno"/>
-        <TurnCard name="Jose Ramirez" text="Ha solicitado un turno"/>
-        <TurnCard isLeft name="Jose Ramirez" text="Ha solicitado un turno"/>
-        <TurnCard name="Jose Ramirez" text="Ha solicitado un turno"/>
-
 
       </VStack>
     </VStack>
