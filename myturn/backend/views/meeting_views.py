@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-from backend.models import Meeting
+from backend.models import Meeting, MeetingUserList
 
 @api_view(('GET',))
 @permission_classes([IsAuthenticated])
@@ -64,6 +64,9 @@ def delete_meet(request):
     """
     try:
         meeting = Meeting.objects.get(meeting_mod=request.user)
+        meetUserList = MeetingUserList.objects.filter(meeting_id=meeting.meeting_id)
+        for meet in meetUserList.iterator():
+            meet.delete()
         meeting.delete()
         return response("Se ha cerrado correctamente la reunión", status.HTTP_200_OK)
     except: return response("El usuario no es moderador en ninguna reunión", status.HTTP_400_BAD_REQUEST)
