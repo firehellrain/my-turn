@@ -86,11 +86,12 @@ class MeetingConsumer(WebsocketConsumer):
             Se asume que la reunión dada siempre va a existir.
         """
         user = verify_user(self, event['token_key'])
-
+        
         if user.is_authenticated:
             if self.user.is_anonymous:
                 self.user = user
-                self.connexion = MeetingUserList.objects.create(meeting_id=self.meeting, user=self.user)
+                if not MeetingUserList.objects.filter(user=self.user).exists():
+                    self.connexion = MeetingUserList.objects.create(meeting_id=self.meeting, user=self.user)
             self.send(text_data=json.dumps({
                 'turn_list': list(self.meeting.turn_set.all().values()),
             }))
@@ -137,15 +138,23 @@ class MeetingConsumer(WebsocketConsumer):
 
     def delete_turn(self, event):
         """ 
-            Borra el turno con la id indicada de la reunión.
-            ¿Comprobar si es moderador?
+            Borra el turno con la id indicada de la reunión
+            si el usuario es el creador de este turno o
+            si el usuario es moderador de la reunión.
+            En cualquier otro caso devuelve un error.
         """
 
         if self.user.is_authenticated:
-            self.meeting.turn_set.filter(pk=event['turn_id']).delete()
-            self.send(text_data=json.dumps({
-                'turn_list': list(self.meeting.turn_set.all().values()),
-            }))
+            turn = self.meeting.turn_set.get(pk=event['turn_id'])
+            if turn.turn_user == self.user or self.meeting.meeting_mod == self.user:
+                self.meeting.turn_set.filter(pk=event['turn_id']).delete()
+                self.send(text_data=json.dumps({
+                    'turn_list': list(self.meeting.turn_set.all().values()),
+                }))
+            else:
+                self.send(text_data=json.dumps({
+                    'error': "El usuario no tiene permisos para borrar este turno",
+                }))
         else:
             user_not_verified(self)
 
