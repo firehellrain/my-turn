@@ -1,12 +1,25 @@
-import { Grid, Button, VStack, GridItem, Spacer, Heading } from "@chakra-ui/react";
+import {
+  Button,
+  VStack,
+  Spacer,
+  Heading,
+  Image,
+  IconButton,
+  HStack,
+} from "@chakra-ui/react";
+import { LockIcon, UnlockIcon } from "@chakra-ui/icons";
 import axios from "axios";
 import { AuthContext } from "../../shared/context/auth-context";
 
+import point_three from "../../assets/point_three.png";
+import point_two from "../../assets/point_two.png";
+import point_up from "../../assets/point_up.png";
+
 /* HOOKS */
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const UserActions = () => {
+const UserActions = ({ ws }) => {
   const auth = useContext(AuthContext);
   const history = useHistory();
 
@@ -30,6 +43,28 @@ const UserActions = () => {
       });
   };
 
+  /* LOCKING AND UNLOCKING TURNS */
+  const [isThreeLocked, setIsThreeLocked] = useState(false);
+  const [isTwoLocked, setIsTwoLocked] = useState(true);
+  const [isOneLocked, setIsOneLocked] = useState(false);
+
+  const handleThreeLock = () => {
+    setIsThreeLocked(!isThreeLocked);
+  };
+
+  const handleTwoLock = () => {
+    setIsTwoLocked(!isTwoLocked);
+  };
+
+  const handleOneLock = () => {
+    setIsOneLocked(!isOneLocked);
+  };
+
+  /* REQUESTS FOR ADDING TURNS */
+  const handleAddThreeTurn = () => {
+    ws.send(JSON.stringify({ request: "add_turn", turn_type: 1 }));
+  };
+
   return (
     <VStack
       w="100%"
@@ -39,23 +74,78 @@ const UserActions = () => {
       textAlign="center"
       p="5"
       pb="20"
+      spacing="5"
     >
-      <Heading fontSize={"2xl"}>Elige tu turno</Heading>
-      <Button
-        boxShadow={
-          "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
-        }
-        colorScheme={"blue"}
-        h="50px"
-        w="210px"
-      ></Button>
+      <Heading fontSize={"2xl"} pb="20px">
+        Elige tu turno
+      </Heading>
+
+      <HStack>
+        <Button
+          boxShadow={
+            "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
+          }
+          w="100px"
+          h="100px"
+          isDisabled={isThreeLocked}
+          onClick={handleAddThreeTurn}
+        >
+          <Image w="100px" draggable={false} src={point_three} />
+        </Button>
+        <IconButton
+          colorScheme={isThreeLocked ? "green" : "red"}
+          icon={isThreeLocked ? <UnlockIcon /> : <LockIcon />}
+          onClick={handleThreeLock}
+        />
+      </HStack>
+
+      <HStack>
+        <Button
+          boxShadow={
+            "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
+          }
+          w="100px"
+          h="100px"
+          isDisabled={isTwoLocked}
+        >
+          <Image w="100px" draggable={false} src={point_two} />
+        </Button>
+        <IconButton
+          colorScheme={isTwoLocked ? "green" : "red"}
+          icon={isTwoLocked ? <UnlockIcon /> : <LockIcon />}
+          onClick={handleTwoLock}
+        />
+      </HStack>
+
+      <HStack>
+        <Button
+          boxShadow={
+            "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
+          }
+          w="100px"
+          h="100px"
+          isDisabled={isOneLocked}
+        >
+          <Image w="100px" draggable={false} src={point_up} />
+        </Button>
+        <IconButton
+          colorScheme={isOneLocked ? "green" : "red"}
+          icon={isOneLocked ? <UnlockIcon /> : <LockIcon />}
+          onClick={handleOneLock}
+        />
+      </HStack>
 
       <Spacer />
+
+      {/* TESTING TEMPORAL TODO: REMOVE */}
+
+      <Button>Fetch turns</Button>
+
       <Button
         boxShadow={
           "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
         }
-        colorScheme={"orange"}
+        colorScheme={"red"}
         w="210px"
         onClick={handleEndMeeting}
       >

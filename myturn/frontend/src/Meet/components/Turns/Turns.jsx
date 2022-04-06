@@ -20,7 +20,17 @@ const Turns = ({ title }) => {
         <Box bgColor={textColor} h="2px"  w="50%"/>
       </HStack>
       <VStack w="100%" overflowY="auto" overflowX={"hidden"} maxHeight={"75vh"} pb="50px">
-        <TurnCard isLeft name="Suavemente" text="Suavemente, besame, que quiero sentir tus labios"/>
+
+        <Heading fontSize={"xl"}>Turno actual</Heading>
+        <TurnCard isMain={true} name="Suavemente"/>
+
+        <Box h="2px" borderColor={"black"} borderTopWidth="2px" pb="20" w="40%"/>
+
+        <TurnCard name="Suavemente" />
+        <TurnCard name="Suavemente" />
+        <TurnCard name="Suavemente" />
+        <TurnCard name="Suavemente" />
+        <TurnCard name="Suavemente" />
 
       </VStack>
     </VStack>

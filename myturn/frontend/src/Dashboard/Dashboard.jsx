@@ -34,7 +34,7 @@ const Dashboard = () => {
   const [userHasMeet, setUserHasMeet] = useState(false);
   useEffect(() => {
 
-    console.log(isMobile);
+    //console.log(isMobile);
     let config = {
       headers: {
         Authorization: "Token " + auth.token,
