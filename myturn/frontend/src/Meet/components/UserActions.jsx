@@ -45,7 +45,7 @@ const UserActions = ({ ws }) => {
 
   /* LOCKING AND UNLOCKING TURNS */
   const [isThreeLocked, setIsThreeLocked] = useState(false);
-  const [isTwoLocked, setIsTwoLocked] = useState(true);
+  const [isTwoLocked, setIsTwoLocked] = useState(false);
   const [isOneLocked, setIsOneLocked] = useState(false);
 
   const handleThreeLock = () => {
@@ -61,8 +61,8 @@ const UserActions = ({ ws }) => {
   };
 
   /* REQUESTS FOR ADDING TURNS */
-  const handleAddThreeTurn = () => {
-    ws.send(JSON.stringify({ request: "add_turn", turn_type: 1 }));
+  const handleAddTurn = (type) => {
+    ws.send(JSON.stringify({ request: "add_turn", turn_type: type }));
   };
 
   return (
@@ -88,7 +88,7 @@ const UserActions = ({ ws }) => {
           w="100px"
           h="100px"
           isDisabled={isThreeLocked}
-          onClick={handleAddThreeTurn}
+          onClick={() => handleAddTurn(3)}
         >
           <Image w="100px" draggable={false} src={point_three} />
         </Button>
@@ -107,6 +107,7 @@ const UserActions = ({ ws }) => {
           w="100px"
           h="100px"
           isDisabled={isTwoLocked}
+          onClick={() => handleAddTurn(2)}
         >
           <Image w="100px" draggable={false} src={point_two} />
         </Button>
@@ -125,6 +126,7 @@ const UserActions = ({ ws }) => {
           w="100px"
           h="100px"
           isDisabled={isOneLocked}
+          onClick={() => handleAddTurn(1)}
         >
           <Image w="100px" draggable={false} src={point_up} />
         </Button>
@@ -137,9 +139,6 @@ const UserActions = ({ ws }) => {
 
       <Spacer />
 
-      {/* TESTING TEMPORAL TODO: REMOVE */}
-
-      <Button>Fetch turns</Button>
 
       <Button
         boxShadow={

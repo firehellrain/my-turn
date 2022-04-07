@@ -45,6 +45,7 @@ const MeetLayout = ({ meet }) => {
   /* ACTUALIZACIONES DEL SERVER */
   ws.onmessage = function (e) {
     const data = JSON.parse(e.data);
+    console.log("ha llegado info: ");
     console.log(data);
 
     if (data.hasOwnProperty("turn_list")) {
@@ -79,7 +80,7 @@ const MeetLayout = ({ meet }) => {
         {/* Muestra lista de usuarios presentes, código de reunión y botón para abandonar */}
       </GridItem>
       <GridItem colSpan={1} rowSpan={1} colStart={2}>
-        <Turns title={meet.meeting_name} turns={turns} />
+        <Turns title={meet.meeting_name} turns={turns} ws={ws}/>
         {/* Título de la renunión y turnos */}
       </GridItem>
       <GridItem colSpan={1} rowSpan={1} colStart={3}>

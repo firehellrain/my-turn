@@ -7,7 +7,7 @@ import point_up from "../../../assets/point_up.png";
 
 const MotionBox = motion(Box);
 
-const TurnCard = ({isMain, name, turn_type }) => {
+const TurnCard = ({isMain, name, turn_type,turn_id,ws }) => {
 
   const x = useMotionValue(0)
   const backgroundColor = useTransform(
@@ -21,6 +21,12 @@ const TurnCard = ({isMain, name, turn_type }) => {
     ["1", "1", "0"]
   )
 
+  const handleDrag = () => {
+    if(x.get() > 250){ /* PARA BORRAR */
+      console.log("turn id is: " + turn_id);
+      ws.send(JSON.stringify({ request: "delete_turn",turn_id:turn_id }));
+    }
+  }
 
   return (
     <MotionBox
@@ -37,9 +43,7 @@ const TurnCard = ({isMain, name, turn_type }) => {
       dragConstraints={{ left: 0, right: 0 }}
       x={x}
       style={{x,backgroundColor,opacity}}
-      onDrag={function(){
-        console.log(x.get())
-      }}
+      onDrag={handleDrag}
     >
       <HStack>
         <Avatar name={name} draggable={false}/>
