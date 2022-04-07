@@ -1,18 +1,30 @@
-import React from "react";
-import { Box, Button, Heading, Avatar, HStack, Text } from "@chakra-ui/react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Box, Button, Heading, Avatar, HStack, Text,Spinner } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 /* HOOKS */
 import { useParams } from "react-router-dom";
 
-const UsersPannel = () => {
+const UsersPannel = ({ users }) => {
   const { mid } = useParams();
 
   /* LEAVE BUTTON LOGIC */
   const handleUserLeave = () => {};
+  const [formatedUsers, setFormatedUsers] = useState([]);
 
+  useEffect(() => {
+    /* convertimos */
+    /* TODO: comprobar si se actualizan los usuarios al unirse alguien nuevo */
+    if (users) {
+      var array = [];
+
+      for (let i in users) array.push({name: users[i],id:i});
+
+      setFormatedUsers(array);
+      /* console.log(array); */
+    }
+  }, [users]);
 
   return (
     <Box
@@ -24,8 +36,16 @@ const UsersPannel = () => {
       minWidth={"300px"}
       textAlign="center"
     >
-      <Button mt="5" fontSize={"xl"} variant="ghost" borderWidth={"3px"} colorScheme={"red"} w="200px">
-        <FontAwesomeIcon icon={faArrowLeft} style={{"marginRight":"10px"}}/>Abandonar
+      <Button
+        mt="5"
+        fontSize={"xl"}
+        variant="ghost"
+        borderWidth={"3px"}
+        colorScheme={"red"}
+        w="200px"
+      >
+        <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: "10px" }} />
+        Abandonar
       </Button>
       <Heading fontSize={"2xl"} mt="5" mb="5vh">
         Código: {mid}
@@ -35,25 +55,26 @@ const UsersPannel = () => {
       </Box>
 
       <Box pt="1px" maxH={"75%"} overflowY={"auto"}>
-
-          {/* TODO: temporal poner dinámico */}
-  
-          <HStack
-            w="100%"
-            h="60px"
-            borderTopWidth={"1px"}
-            mt="-1px"
-            borderBottomWidth={"1px"}
-            textAlign="left"
-            spacing="10px"
-            userSelect={"none"}
-          >
-            <Avatar mt="5px" ml="5" h="40px" w="40px" name="Test test" />
-            <Text fontSize={"xl"}>Test testing</Text>
-          </HStack>
- 
-
-
+        {users ?
+          formatedUsers.map((user) => {
+            return (
+              <HStack
+                w="100%"
+                h="60px"
+                borderTopWidth={"1px"}
+                mt="-1px"
+                borderBottomWidth={"1px"}
+                textAlign="left"
+                spacing="10px"
+                userSelect={"none"}
+                key={user.id}
+              >
+                <Avatar mt="5px" ml="5" h="40px" w="40px" name={user.name} />
+                <Text fontSize={"xl"}>{user.name}</Text>
+              </HStack> 
+            );
+          }) : <Spinner/>}
+          {/* TODO: mejorar spinner */}
       </Box>
     </Box>
   );

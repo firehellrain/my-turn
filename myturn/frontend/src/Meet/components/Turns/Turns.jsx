@@ -8,7 +8,7 @@ import {
 import React from "react";
 import TurnCard from "./TurnCard";
 
-const Turns = ({ title }) => {
+const Turns = ({ title,turns }) => {
 
   const textColor = useColorModeValue("black","white")
 
@@ -26,11 +26,12 @@ const Turns = ({ title }) => {
 
         <Box h="2px" borderColor={"black"} borderTopWidth="2px" pb="20" w="40%"/>
 
-        <TurnCard name="Suavemente" />
-        <TurnCard name="Suavemente" />
-        <TurnCard name="Suavemente" />
-        <TurnCard name="Suavemente" />
-        <TurnCard name="Suavemente" />
+
+        {turns && turns.map(turn => {
+          return( <TurnCard key={turn.id} name={turn.turn_type} />)
+        })}
+        
+  
 
       </VStack>
     </VStack>

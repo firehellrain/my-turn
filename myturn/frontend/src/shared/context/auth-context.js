@@ -5,4 +5,6 @@ export const AuthContext = createContext({
     token: null,
     login: () => {},
     logout: () => {},
+    currentMeet: null,
+    amIMod: false,
 })

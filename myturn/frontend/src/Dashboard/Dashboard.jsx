@@ -44,7 +44,7 @@ const Dashboard = () => {
     axios
       .get(`http://localhost:8000/backend/user_has_meet`, config)
       .then((response) => {
-        /* console.log("HAS MEET: ", response.data); */
+        console.log("HAS MEET: ", response.data);
         setUserHasMeet(true);
         setCode(response.data.meeting.meeting_id);
       })
