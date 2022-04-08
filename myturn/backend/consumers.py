@@ -1,9 +1,9 @@
 import json
 from channels.generic.websocket import WebsocketConsumer
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, User
+from django.forms.models import model_to_dict
 from asgiref.sync import async_to_sync
 from .models import Meeting, MeetingUserList
-from django.contrib.auth.models import User
 
 from .views.aux_funcs import user_not_verified, verify_user
 
@@ -94,6 +94,7 @@ class MeetingConsumer(WebsocketConsumer):
                     self.connexion = MeetingUserList.objects.create(meeting_id=self.meeting, user=self.user)
             self.send(text_data=json.dumps({
                 'turn_list': list(self.meeting.turn_set.all().values()),
+                'user': self.user.pk
             }))
         else:
             user_not_verified(self)
