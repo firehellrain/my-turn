@@ -94,7 +94,10 @@ class MeetingConsumer(WebsocketConsumer):
                     self.connexion = MeetingUserList.objects.create(meeting_id=self.meeting, user=self.user)
             self.send(text_data=json.dumps({
                 'turn_list': list(self.meeting.turn_set.all().values()),
-                'user': self.user.pk
+                'user': {
+                    'user_id': self.user.pk,
+                    'user_name': self.user.first_name + " " + self.user.last_name
+                }
             }))
         else:
             user_not_verified(self)
