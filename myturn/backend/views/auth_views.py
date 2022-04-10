@@ -1,4 +1,4 @@
-from .aux_funcs import response
+from backend.aux_funcs.aux_generic import response
 
 from django.forms.models import model_to_dict
 

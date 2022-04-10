@@ -1,28 +1,33 @@
-from .aux_funcs import response, generate_unique_meeting
-
+from backend.aux_funcs.aux_generic import response
+from backend.aux_funcs.aux_meeting import (
+    get_meeting_from_code, 
+    get_meeting_from_mod,
+    user_is_mod,
+    create_meeting,
+    delete_meet_from_code,
+    user_is_connected_to_meet,
+    disconnect_user_from_meet
+)
 from django.forms.models import model_to_dict
-from django.contrib.auth.models import User
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-from backend.models import Meeting, MeetingUserList
-
 @api_view(('GET',))
 @permission_classes([IsAuthenticated])
-def user_has_meet(request):
+def has_meet(request):
     """
         Comprueba si el usuario está moderando una reunión. 
         En caso afirmativo, envía los metadatos de la reunión,
         en caso contrario devuelve un aviso de error.
     """
-    try:
-        meeting = Meeting.objects.get(meeting_mod=request.user)
+    if user_is_mod(request.user):
+        meeting = get_meeting_from_mod(request.user)
         data = {'meeting': model_to_dict(meeting)}
         return Response(data, status=status.HTTP_200_OK)
-    except: return response("El usuario no es moderador en ninguna reunión", status.HTTP_400_BAD_REQUEST)
+    else: return response("El usuario no es moderador en ninguna reunión", status.HTTP_400_BAD_REQUEST)
 
 @api_view(('GET',))
 @permission_classes([IsAuthenticated])
@@ -33,7 +38,9 @@ def access_meet(request, meeting_id):
         en caso contrario devuelve un aviso de error.
     """
     try:
-        meeting = Meeting.objects.get(meeting_id=meeting_id)
+        meeting = get_meeting_from_code(meeting_id)
+        if user_is_connected_to_meet(request.user):
+            disconnect_user_from_meet(request.user)
         data = {'meeting': model_to_dict(meeting)}
         return Response(data, status=status.HTTP_200_OK)
     except: return response("El código de reunión no es válido", status.HTTP_400_BAD_REQUEST)
@@ -47,12 +54,13 @@ def create_meet(request):
         En caso de que ya sea moderador de una reunión,
         devuelve un aviso de error.
     """
-    try:
-        meeting = Meeting(meeting_id=generate_unique_meeting(), meeting_mod=request.user, meeting_name=request.data.get('meetname'))
-        meeting.save()
+    if not user_is_mod(request.user):
+        meeting = create_meeting(request.user, request.data.get('meetname'))
+        if user_is_connected_to_meet(request.user):
+            disconnect_user_from_meet(request.user)
         data = {'meeting': model_to_dict(meeting)}
         return Response(data, status=status.HTTP_200_OK)
-    except: return response("El usuario es moderador en una reunión existente", status.HTTP_400_BAD_REQUEST)
+    else: return response("El usuario es moderador en una reunión existente", status.HTTP_400_BAD_REQUEST)
 
 @api_view(('GET',))
 @permission_classes([IsAuthenticated])
@@ -63,10 +71,6 @@ def delete_meet(request):
         devuelve un aviso de error.
     """
     try:
-        meeting = Meeting.objects.get(meeting_mod=request.user)
-        meetUserList = MeetingUserList.objects.filter(meeting_id=meeting.meeting_id)
-        for meet in meetUserList.iterator():
-            meet.delete()
-        meeting.delete()
+        delete_meet_from_code(get_meeting_from_mod(request.user))
         return response("Se ha cerrado correctamente la reunión", status.HTTP_200_OK)
     except: return response("El usuario no es moderador en ninguna reunión", status.HTTP_400_BAD_REQUEST)

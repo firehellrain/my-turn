@@ -2,15 +2,28 @@ import json
 from channels.generic.websocket import WebsocketConsumer
 from django.contrib.auth.models import AnonymousUser, User
 from asgiref.sync import async_to_sync
-from .models import Meeting, MeetingUserList
 
-from .views.aux_funcs import user_not_verified, verify_user, get_turn_list
+from .aux_funcs.aux_generic import user_not_verified, verify_user
+from .aux_funcs.aux_meeting import (
+    user_is_mod,
+    get_meeting_from_code,
+    get_user_list_from_meeting,
+    user_is_connected_to_meet,
+    connect_user_to_meet,
+    disconnect_user_from_meet
+)
+from .aux_funcs.aux_turn import (
+    get_turn_list_from_meet_code,
+    user_add_turn,
+    delete_turn_from_meeting, 
+    get_turn_from_meeting
+)
 
 class MeetingConsumer(WebsocketConsumer):
 
     def connect(self):
         self.meeting_code = self.scope['url_route']['kwargs']['meeting_id']
-        self.meeting = Meeting.objects.get(meeting_id=self.meeting_code)
+        self.meeting = get_meeting_from_code(self.meeting_code)
         self.user = AnonymousUser()
 
         # Unirse a la reunión
@@ -22,7 +35,7 @@ class MeetingConsumer(WebsocketConsumer):
         self.accept()
     
     def disconnect(self, close_code):
-        MeetingUserList.objects.filter(user=self.user).delete()
+        disconnect_user_from_meet(self.user)
         async_to_sync(self.channel_layer.group_discard)(
             self.meeting_code,
             self.channel_name
@@ -112,8 +125,8 @@ class MeetingConsumer(WebsocketConsumer):
         
         if self.user.is_anonymous:
             self.user = user
-            if not MeetingUserList.objects.filter(user=self.user).exists():
-                self.connexion = MeetingUserList.objects.create(meeting_id=self.meeting, user=self.user)
+            if not user_is_connected_to_meet(self.user):
+                self.connexion = connect_user_to_meet(self.user, self.meeting)
         
         self.send(text_data=json.dumps({
             'user': {
@@ -129,7 +142,7 @@ class MeetingConsumer(WebsocketConsumer):
         """
         if self.user.is_authenticated:
             self.send(text_data=json.dumps({
-                'turn_list': list(get_turn_list(self.meeting_code)),
+                'turn_list': list(get_turn_list_from_meet_code(self.meeting_code).values()),
             }))
         else:
             user_not_verified(self)
@@ -140,7 +153,7 @@ class MeetingConsumer(WebsocketConsumer):
             Se asume que la reunión dada siempre va a existir.
         """
         if self.user.is_authenticated:
-            user_list = MeetingUserList.objects.filter(meeting_id=self.meeting).values_list('user', flat=True)
+            user_list = get_user_list_from_meeting(self.meeting).values_list('user', flat=True)
             username_list = {}
 
             for u in user_list:
@@ -158,12 +171,9 @@ class MeetingConsumer(WebsocketConsumer):
             En caso de que ya tenga un turno pedido,
             devuelve un aviso de error.
         """
-        self.send(text_data=json.dumps({
-            'mensaje': "enviado",
-        }))
         if self.user.is_authenticated:
             try:
-                self.meeting.turn_set.create(turn_type=event['turn_type'], turn_user=self.user)
+                user_add_turn(self.user, self.meeting, event['turn_type'])
             except:
                 self.send(text_data=json.dumps({
                     'error': 'El usuario ya tiene un turno pedido.',
@@ -180,9 +190,9 @@ class MeetingConsumer(WebsocketConsumer):
         """
 
         if self.user.is_authenticated:
-            turn = self.meeting.turn_set.get(pk=event['turn_id'])
+            turn = get_turn_from_meeting(self.meeting, event['turn_id'])
             if turn.turn_user == self.user or self.meeting.meeting_mod == self.user:
-                self.meeting.turn_set.filter(pk=event['turn_id']).delete()
+                delete_turn_from_meeting(self.meeting, event['turn_id'])
             else:
                 self.send(text_data=json.dumps({
                     'error': "El usuario no tiene permisos para borrar este turno",
@@ -203,7 +213,7 @@ class MeetingConsumer(WebsocketConsumer):
                 
                 new_mod = User.objects.get(pk=event['new_mod'])
 
-                if not Meeting.objects.filter(meeting_mod=new_mod).exists():
+                if not user_is_mod(new_mod):
                     self.meeting.meeting_mod = new_mod
                     self.meeting.save()
                 else: 
