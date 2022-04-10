@@ -45,7 +45,22 @@ function App() {
         /* console.log(response.data); */
         setUsername(response.data.first_name + " " + response.data.last_name);
         setUserId(response.data.id);
-        /* TODO:  GUARDAR EN LOCALSTORAGE Y HACER FETCH CUANDO RECARGUE*/
+        
+        /* Guardamos al localstorage con los nuevos datos */
+        const storedData = JSON.parse(localStorage.getItem("userData"));
+        const storedObject = {
+          token: storedData.token,
+          expiration: storedData.expiration
+        }
+
+        localStorage.setItem(
+          "userData",
+          JSON.stringify({
+            ...storedObject,
+            userId: response.data.id,
+            username:response.data.first_name + " " + response.data.last_name 
+          })
+        );
       })
       .catch((err) => {
         console.error(err);
@@ -61,12 +76,13 @@ function App() {
       },
     };
 
-    //TODO: Y SI HAY ERROR DE CONEXIÓN ?
     axios
       .get("http://localhost:8000/backend/logout", config)
       .then((response) => {
         console.log(response.data);
         setToken(null);
+        setUserId(null);
+        setUsername(null);
         localStorage.removeItem("userData");
         console.log("se ha deslogeado al usuario");
       })
@@ -74,10 +90,6 @@ function App() {
         console.log(err);
       });
 
-    /* 
-    //LO INICIAL
-    setToken(null);
-    localStorage.removeItem("userData"); */
   }, []);
 
   useEffect(() => {

@@ -4,18 +4,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 /* HOOKS */
-import { useParams } from "react-router-dom";
+import { useParams,useHistory } from "react-router-dom";
 
 const UsersPannel = ({ users }) => {
   const { mid } = useParams();
+  const history = useHistory();
 
   /* LEAVE BUTTON LOGIC */
-  const handleUserLeave = () => {};
+  const handleUserLeave = () => {
+    history.push("/main")
+  };
+
   const [formatedUsers, setFormatedUsers] = useState([]);
 
   useEffect(() => {
     /* convertimos */
-    /* TODO: comprobar si se actualizan los usuarios al unirse alguien nuevo */
     if (users) {
       var array = [];
 
@@ -43,6 +46,7 @@ const UsersPannel = ({ users }) => {
         borderWidth={"3px"}
         colorScheme={"red"}
         w="200px"
+        onClick={handleUserLeave}
       >
         <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: "10px" }} />
         Abandonar

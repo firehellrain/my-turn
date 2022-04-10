@@ -81,8 +81,6 @@ const Login = () => {
         .then((response) => {
           console.log(response);
           setIsLoading(false);
-          //TODO: REMOVE
-          /* console.log(response.data.token); */
           auth.login(response.data.token);
           
           history.push("main");

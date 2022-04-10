@@ -4,6 +4,7 @@ import {
   Button,
   Input,
   useColorModeValue,
+  useColorMode,
   Text,
   HStack,
   Image,
@@ -20,6 +21,7 @@ import { AuthContext } from "../shared/context/auth-context";
 
 import Illustration from "../assets/dashboardImg.svg";
 import MyTurnLogo from "../assets/MyTurnLogo.svg";
+import MyTurnLogoBlanco from "../assets/MyTurnLogoBlanco.svg";
 import axios from "axios";
 
 const MotionButton = motion(Button);
@@ -28,6 +30,7 @@ const Dashboard = () => {
   const history = useHistory();
   const auth = useContext(AuthContext);
   const borderColor = useColorModeValue("black", "white");
+  const { colorMode } = useColorMode();
   const isMobile = useMediaQuery('max-width:1200px'); /* FIXME:  */
 
   /* ON REFRESH CHECK IF USER HAS MEET */
@@ -259,7 +262,7 @@ const Dashboard = () => {
           w="60%"
           minWidth={"400px"}
           maxWidth="600px"
-          src={MyTurnLogo}
+          src={colorMode == "dark" ? MyTurnLogoBlanco : MyTurnLogo}
           draggable={false}
           userSelect="none"
         />
