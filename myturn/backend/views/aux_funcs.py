@@ -25,17 +25,11 @@ def generate_unique_meeting():
             break
     return code
 
-def get_meeting(meeting_code):
-    """
-        Devuelve los datos de la reunión con el código dado
-    """
-    return Meeting.objects.get(meeting_id=meeting_code)
-
 def get_turn_list(meeting_code):
     """
         Devuelve la lista de turnos de una reunión
     """
-    return get_meeting(meeting_code).turn_set.all().values()
+    return Meeting.objects.get(meeting_id=meeting_code).turn_set.all().values()
 
 def create_meeting(id, name, mod):
     """
