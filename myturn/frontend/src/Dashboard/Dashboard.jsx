@@ -156,7 +156,7 @@ const Dashboard = () => {
           userSelect="none"
         />
         <Heading borderBottomWidth="2px" pb="10px" borderColor={borderColor}>
-          Contecta con otros usuarios
+          Conecta con otros usuarios
         </Heading>
         <Text textAlign={"center"} fontSize="xl" w="60%">
           Consigue el código de la reunión para unirte a una sesión.

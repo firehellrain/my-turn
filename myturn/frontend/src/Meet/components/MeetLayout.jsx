@@ -27,19 +27,13 @@ const MeetLayout = ({ meet }) => {
   ws.onopen = () => {
     console.log("conectado al ws");
 
+    //nos autenticamos primero
+    ws.send(JSON.stringify({ request: "auth_user", token_key: auth.token}));
     ws.send(
-      JSON.stringify({ request: "get_turn_list", token_key: auth.token })
+      JSON.stringify({ request: "get_turn_list" })
     );
 
-    /* EJEMPLO MANDAR TURNO */
-    /* ws.send(
-      JSON.stringify({
-        request: "add_turn",
-        turn_type: 1,
-        token_key: auth.token,
-      })
-    ); */
-    ws.send(JSON.stringify({ request: "get_user_list" }));
+    /* ws.send(JSON.stringify({ request: "get_user_list" })); */
   };
 
   /* ACTUALIZACIONES DEL SERVER */
