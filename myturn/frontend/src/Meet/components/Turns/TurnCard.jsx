@@ -21,10 +21,13 @@ const TurnCard = ({isMain, name, turn_type,turn_id,ws }) => {
     ["1", "1", "0"]
   )
 
+  let once = true;
+
   const handleDrag = () => {
-    if(x.get() > 250){ /* PARA BORRAR */
+    if(x.get() > 250 && once){ /* PARA BORRAR */
       console.log("turn id is: " + turn_id);
       ws.send(JSON.stringify({ request: "delete_turn",turn_id:turn_id }));
+      once = false;
     }
   }
 
