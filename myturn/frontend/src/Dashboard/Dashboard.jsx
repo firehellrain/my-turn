@@ -45,7 +45,7 @@ const Dashboard = () => {
     };
 
     axios
-      .get(`http://localhost:8000/backend/user_has_meet`, config)
+      .get(`http://localhost:8000/backend/has_meet`, config)
       .then((response) => {
         console.log("HAS MEET: ", response.data);
         setUserHasMeet(true);
