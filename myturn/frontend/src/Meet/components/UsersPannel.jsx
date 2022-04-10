@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Heading, Avatar, HStack, Text,Spinner } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-
+import { faArrowLeft,faCrown } from "@fortawesome/free-solid-svg-icons";
 /* HOOKS */
 import { useParams,useHistory } from "react-router-dom";
 
@@ -74,7 +73,8 @@ const UsersPannel = ({ users }) => {
                 key={user.id}
               >
                 <Avatar mt="5px" ml="5" h="40px" w="40px" name={user.name} />
-                <Text fontSize={"xl"}>{user.name}</Text>
+                <Text fontSize={"xl"} maxWidth="180px">{user.name}</Text>
+                <FontAwesomeIcon icon={faCrown} />
               </HStack> 
             );
           }) : <Spinner/>}

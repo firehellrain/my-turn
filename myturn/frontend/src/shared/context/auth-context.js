@@ -7,6 +7,7 @@ export const AuthContext = createContext({
     username:null,
     login: () => {},
     logout: () => {},
+    toggleMod: () => {},
     currentMeet: null,
     amIMod: false,
     

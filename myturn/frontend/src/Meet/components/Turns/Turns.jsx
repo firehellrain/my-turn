@@ -56,6 +56,7 @@ const Turns = ({ title, turns, ws }) => {
           turns.map((turn) => {
             return (
               <TurnCard
+                isMain={false}
                 key={turn.id}
                 name={turn.turn_type}
                 turn_type={turn.turn_type}

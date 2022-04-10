@@ -93,11 +93,12 @@ const UserActions = ({ ws }) => {
         >
           <Image w="100px" draggable={false} src={point_three} />
         </Button>
-        <IconButton
+        {auth.amIMod && <IconButton
           colorScheme={isThreeLocked ? "green" : "red"}
           icon={isThreeLocked ? <UnlockIcon /> : <LockIcon />}
           onClick={handleThreeLock}
-        />
+        />}
+        
       </HStack>
 
       <HStack>
@@ -112,11 +113,11 @@ const UserActions = ({ ws }) => {
         >
           <Image w="100px" draggable={false} src={point_two} />
         </Button>
-        <IconButton
+        {auth.amIMod &&  <IconButton
           colorScheme={isTwoLocked ? "green" : "red"}
           icon={isTwoLocked ? <UnlockIcon /> : <LockIcon />}
           onClick={handleTwoLock}
-        />
+        />}
       </HStack>
 
       <HStack>
@@ -131,11 +132,11 @@ const UserActions = ({ ws }) => {
         >
           <Image w="100px" draggable={false} src={point_up} />
         </Button>
-        <IconButton
+        {auth.amIMod && <IconButton
           colorScheme={isOneLocked ? "green" : "red"}
           icon={isOneLocked ? <UnlockIcon /> : <LockIcon />}
           onClick={handleOneLock}
-        />
+        />}
       </HStack>
 
       <Spacer />

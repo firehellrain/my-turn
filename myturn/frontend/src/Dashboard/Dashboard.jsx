@@ -132,6 +132,8 @@ const Dashboard = () => {
         console.log(response.data);
         setCode(response.data.meeting.meeting_id)
         setLoadingCreateMeet(false);
+        /* PONEMOS AL USUARIO COMO MODERADOR */
+        auth.toggleMod(response.data.meeting.meeting_mod) 
         // redirigir a la reunión si se ha podido crear
         history.push(`/meet/${response.data.meeting.meeting_id}`);
       })

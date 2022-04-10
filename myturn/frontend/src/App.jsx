@@ -20,6 +20,16 @@ function App() {
   const [token, setToken] = useState(null);
   const [userId,setUserId] = useState(null);
   const [username,setUsername] = useState(null);
+  const [amIdMod,setAmIMod] = useState(false);
+  /* const [currentMeet, setCurrentMeet] = useState(null); */
+
+  const toggleMod = useCallback((modId) => {
+    //true -> is mod
+    //false -> is not mod
+    if(userId === modId){
+      setAmIMod(true);
+    }
+  })
 
   const login = useCallback((token, expirationDate) => {
     setToken(token);
@@ -140,9 +150,11 @@ function App() {
         username:username,
         login: login,
         logout: logout,
+        amIMod: amIdMod,
+        toggleMod: toggleMod,
       }}
     >
-      <Router>
+      <Router>  
         <Background>
           <Navbar />
           <main>{routes}</main>
