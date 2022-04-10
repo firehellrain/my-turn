@@ -62,6 +62,7 @@ const UserActions = ({ ws }) => {
 
   /* REQUESTS FOR ADDING TURNS */
   const handleAddTurn = (type) => {
+    console.log("llamadas")
     ws.send(JSON.stringify({ request: "add_turn", turn_type: type }));
   };
 
@@ -88,7 +89,7 @@ const UserActions = ({ ws }) => {
           w="100px"
           h="100px"
           isDisabled={isThreeLocked}
-          onClick={() => handleAddTurn(3)}
+          onClick={() => handleAddTurn("Rodeo")}
         >
           <Image w="100px" draggable={false} src={point_three} />
         </Button>
@@ -107,7 +108,7 @@ const UserActions = ({ ws }) => {
           w="100px"
           h="100px"
           isDisabled={isTwoLocked}
-          onClick={() => handleAddTurn(2)}
+          onClick={() => handleAddTurn("Directo")}
         >
           <Image w="100px" draggable={false} src={point_two} />
         </Button>
@@ -126,7 +127,7 @@ const UserActions = ({ ws }) => {
           w="100px"
           h="100px"
           isDisabled={isOneLocked}
-          onClick={() => handleAddTurn(1)}
+          onClick={() => handleAddTurn("Normal")}
         >
           <Image w="100px" draggable={false} src={point_up} />
         </Button>

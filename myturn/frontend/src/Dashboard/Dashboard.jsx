@@ -49,7 +49,7 @@ const Dashboard = () => {
         setCode(response.data.meeting.meeting_id);
       })
       .catch((err) => {
-        console.log("has meet error: ", err);
+        console.log("has meet error: ", err.response.data);
         setUserHasMeet(false);
       });
   }, [])

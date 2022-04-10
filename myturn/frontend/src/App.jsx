@@ -18,6 +18,8 @@ import Background from "./shared/components/Background";
 
 function App() {
   const [token, setToken] = useState(null);
+  const [userId,setUserId] = useState(null);
+  const [username,setUsername] = useState(null);
 
   const login = useCallback((token, expirationDate) => {
     setToken(token);
@@ -30,6 +32,24 @@ function App() {
         expiration: tokenExpirationDate.toISOString(),
       })
     );
+
+    //extra info for user
+    let config = {
+      headers: {
+        Authorization: "Token " + token,
+      },
+    };
+    axios
+      .get(`http://localhost:8000/backend/user_data`, config)
+      .then((response) => {
+        /* console.log(response.data); */
+        setUsername(response.data.first_name + " " + response.data.last_name);
+        setUserId(response.data.id);
+        /* TODO:  GUARDAR EN LOCALSTORAGE Y HACER FETCH CUANDO RECARGUE*/
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }, []);
 
   const logout = useCallback(() => {
@@ -104,6 +124,8 @@ function App() {
       value={{
         isLoggedIn: !!token, //this will be true if there is a token
         token: token,
+        userId:userId,
+        username:username,
         login: login,
         logout: logout,
       }}
