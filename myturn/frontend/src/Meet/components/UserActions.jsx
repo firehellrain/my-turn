@@ -19,7 +19,7 @@ import point_up from "../../assets/point_up.png";
 import { useContext, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const UserActions = ({ ws }) => {
+const UserActions = ({ ws,modId }) => {
   const auth = useContext(AuthContext);
   const history = useHistory();
 
@@ -93,7 +93,7 @@ const UserActions = ({ ws }) => {
         >
           <Image w="100px" draggable={false} src={point_three} />
         </Button>
-        {auth.amIMod && <IconButton
+        {auth.userId === modId && <IconButton
           colorScheme={isThreeLocked ? "green" : "red"}
           icon={isThreeLocked ? <UnlockIcon /> : <LockIcon />}
           onClick={handleThreeLock}
@@ -113,7 +113,7 @@ const UserActions = ({ ws }) => {
         >
           <Image w="100px" draggable={false} src={point_two} />
         </Button>
-        {auth.amIMod &&  <IconButton
+        {auth.userId === modId &&  <IconButton
           colorScheme={isTwoLocked ? "green" : "red"}
           icon={isTwoLocked ? <UnlockIcon /> : <LockIcon />}
           onClick={handleTwoLock}
@@ -132,7 +132,7 @@ const UserActions = ({ ws }) => {
         >
           <Image w="100px" draggable={false} src={point_up} />
         </Button>
-        {auth.amIMod && <IconButton
+        {auth.userId === modId && <IconButton
           colorScheme={isOneLocked ? "green" : "red"}
           icon={isOneLocked ? <UnlockIcon /> : <LockIcon />}
           onClick={handleOneLock}

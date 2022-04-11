@@ -6,7 +6,7 @@ import { AuthContext } from "../../shared/context/auth-context";
 import React, { useEffect, useState,useContext } from "react";
 import { useParams,useHistory } from "react-router-dom";
 
-const UsersPannel = ({ users,ws }) => {
+const UsersPannel = ({ users,ws,modId }) => {
   const { mid } = useParams();
   const history = useHistory();
   const auth = useContext(AuthContext)
@@ -19,6 +19,8 @@ const UsersPannel = ({ users,ws }) => {
   /* Lógica para el cambio de moderador */
   const handleChangeMod = (id) => {
     console.log(id)
+    ws.send( JSON.stringify({ request: "change_mod",new_mod:id }));
+    auth.toggleMod(false); //el usuario deja de ser moderador
   }
 
   const [formatedUsers, setFormatedUsers] = useState([]);
@@ -83,7 +85,7 @@ const UsersPannel = ({ users,ws }) => {
                 <Avatar mt="5px" ml="5" h="40px" w="40px" name={user.name} />
                 <Text fontSize={"xl"} maxWidth="180px">{user.name}</Text>
 
-                {auth.amIMod && auth.userId.toString() !== user.id && <FontAwesomeIcon onClick={() => handleChangeMod(user.id)} icon={faCrown} />}
+                {auth.userId === modId && auth.userId.toString() !== user.id && <FontAwesomeIcon onClick={() => handleChangeMod(user.id)} icon={faCrown} />}
                 
               </HStack> 
             );
