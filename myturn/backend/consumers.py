@@ -188,7 +188,6 @@ class MeetingConsumer(WebsocketConsumer):
             si el usuario es moderador de la reunión.
             En cualquier otro caso devuelve un error.
         """
-
         if self.user.is_authenticated:
             turn = get_turn_from_meeting(self.meeting, event['turn_id'])
             if turn.turn_user == self.user or self.meeting.meeting_mod == self.user:

@@ -71,6 +71,6 @@ def delete_meet(request):
         devuelve un aviso de error.
     """
     try:
-        delete_meet_from_code(get_meeting_from_mod(request.user))
+        delete_meet_from_code(get_meeting_from_mod(request.user).meeting_id)
         return response("Se ha cerrado correctamente la reunión", status.HTTP_200_OK)
     except: return response("El usuario no es moderador en ninguna reunión", status.HTTP_400_BAD_REQUEST)

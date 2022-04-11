@@ -36,7 +36,7 @@ def get_turn_from_meeting(meeting, turn_id):
         Devuelve los datos del turno con la id indicada
         de la reunión de la que se solicita
     """
-    meeting.turn_set.get(pk=turn_id)
+    return meeting.turn_set.get(pk=turn_id)
 
 def user_add_turn(user, meeting, turn_type):
     """
