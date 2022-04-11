@@ -89,6 +89,19 @@ class MeetingConsumer(WebsocketConsumer):
                         'turn_type': text_data_json['turn_type'],
                     }
                 )
+            elif request == "switch_block_turns":
+                async_to_sync(self.channel_layer.send)(
+                    self.channel_name,
+                    {
+                        'type': request,
+                    }
+                )
+                async_to_sync(self.channel_layer.group_send)(
+                    self.meeting_code,
+                    {
+                        'type': "get_block_turns_status",
+                    }
+                )
             elif request == "delete_turn":
                 async_to_sync(self.channel_layer.send)(
                     self.channel_name,
@@ -179,6 +192,18 @@ class MeetingConsumer(WebsocketConsumer):
         else:
             user_not_verified(self)
 
+    def get_block_turns_status(self, event):
+        """ 
+            Solicita el estado de las solicitudes de turno.
+            Se asume que la reunión dada siempre va a existir.
+        """
+        if self.user.is_authenticated:
+            self.send(text_data=json.dumps({
+                'status': get_block_turns_from_meeting_code(self.meeting_code),
+            }))
+        else:
+            user_not_verified(self)
+        
     def add_turn(self, event):
         """ 
             Solicita un turno a nombre del usuario dentro de una reunión.
@@ -216,9 +241,6 @@ class MeetingConsumer(WebsocketConsumer):
         if self.user.is_authenticated:
             if get_mod_from_meeting_code(self.meeting_code) == self.user:
                 switch_block_turns_from_meeting_code(self.meeting_code)
-                self.send(text_data=json.dumps({
-                    'status': get_block_turns_from_meeting_code(self.meeting_code),
-                }))
             else:
                 self.send(text_data=json.dumps({
                     'error': "El usuario solicitante no es moderador de la reunión",
