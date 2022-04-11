@@ -5,7 +5,7 @@ from asgiref.sync import async_to_sync
 
 from .aux_funcs.aux_generic import user_not_verified, verify_user
 from .aux_funcs.aux_meeting import (
-    change_mod_from_meeting,
+    change_mod_from_meeting_code,
     user_is_mod,
     get_meeting_from_code,
     get_user_list_from_meeting,
@@ -97,12 +97,6 @@ class MeetingConsumer(WebsocketConsumer):
                     {
                         'type': request,
                         'new_mod': text_data_json['new_mod'],
-                    }
-                )
-                async_to_sync(self.channel_layer.group_send)(
-                    self.meeting_code,
-                    {
-                        'type': "get_user_list",
                     }
                 )
             else:
@@ -215,7 +209,7 @@ class MeetingConsumer(WebsocketConsumer):
                 new_mod = User.objects.get(pk=event['new_mod'])
 
                 if not user_is_mod(new_mod):
-                    change_mod_from_meeting(self.meeting, new_mod)
+                    change_mod_from_meeting_code(self.meeting_code, new_mod)
                 else: 
                     self.send(text_data=json.dumps({
                         'error': "El usuario ya es moderador de una reunión",

@@ -19,10 +19,11 @@ def user_is_mod(user):
     """
     return Meeting.objects.filter(meeting_mod=user).exists()
 
-def change_mod_from_meeting(meeting, user):
+def change_mod_from_meeting_code(meeting_code, user):
     """
         Cambia al moderador de la reunión
     """
+    meeting = get_meeting_from_code(meeting_code)
     meeting.meeting_mod = user
     meeting.save()
 
