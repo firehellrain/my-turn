@@ -109,6 +109,12 @@ class MeetingConsumer(WebsocketConsumer):
                         'new_mod': text_data_json['new_mod'],
                     }
                 )
+                async_to_sync(self.channel_layer.group_send)(
+                    self.meeting_code,
+                    {
+                        'type': "get_user_list",
+                    }
+                )
             else:
                 async_to_sync(self.channel_layer.group_send)(
                     self.meeting_code,
