@@ -16,6 +16,7 @@ const MeetLayout = ({ meet }) => {
   const [turns, setTurns] = useState(null);
   const [users, setUsers] = useState(null);
   const [mod,setMod] = useState(null); // Para comprobar si el usuario es moderador
+  const [turnsBlocked, setTurnsBlocked] = useState(false)
 
   const toast = useToast()
 
@@ -32,6 +33,7 @@ const MeetLayout = ({ meet }) => {
     //nos autenticamos primero
     ws.send(JSON.stringify({ request: "auth_user", token_key: auth.token}));
     ws.send(JSON.stringify({ request: "get_turn_list" }));
+    ws.send(JSON.stringify({ request: "get_block_turns_status" }));
 
     /* ws.send(JSON.stringify({ request: "get_user_list" })); */
   };
@@ -49,15 +51,6 @@ const MeetLayout = ({ meet }) => {
       /* console.log("turn list es: ");
       console.log(data.turn_list); */
       setTurns(data.turn_list);
-      if(data.turn_list && data.turn_list[data.turn_list.length-1].turn_type === "Rodeo"){
-        toast({
-          title: 'Account created.',
-          description: "We've created your account for you.",
-          status: 'success',
-          duration: 9000,
-          isClosable: true,
-        })
-      }
     } else if (data.hasOwnProperty("user_list")) {
       setUsers(data.user_list);
       setMod(data.meeting_mod);
@@ -67,6 +60,16 @@ const MeetLayout = ({ meet }) => {
         auth.toggleMod(true); //si el nuevo moderador coincide con el id de usuario lo actualizamosç
         console.log("usuario con id: " + auth.userId +  " es mod: " +auth.userId === mod);
       }
+    }else if(data.hasOwnProperty("v_turn")){
+      toast({
+        title: 'Rodeo',
+        description: `El usuario ${data.full_name} cree que el debate está perdiendo el sentido`,
+        status: 'warning',
+        duration: 9000,
+        isClosable: true,
+      })
+    }else if(data.hasOwnProperty("status")){
+      setTurnsBlocked(data.status); /* Para controlar el bloqueo de los turnos */
     }
   };
 
@@ -83,11 +86,11 @@ const MeetLayout = ({ meet }) => {
         {/* Muestra lista de usuarios presentes, código de reunión y botón para abandonar */}
       </GridItem>
       <GridItem colSpan={1} rowSpan={1} colStart={2}>
-        <Turns title={meet.meeting_name} turns={turns} users={users} ws={ws}/>
+        <Turns title={meet.meeting_name} turns={turns} users={users} ws={ws} modId={mod}/>
         {/* Título de la renunión y turnos */}
       </GridItem>
       <GridItem colSpan={1} rowSpan={1} colStart={3}>
-        <UserActions ws={ws} modId={mod}/>
+        <UserActions ws={ws} modId={mod} turnsBlocked={turnsBlocked}/>
         {/* Tipos de turnos, cambio de moderador y botón para eliminar reunión */}
       </GridItem>
     </Grid>

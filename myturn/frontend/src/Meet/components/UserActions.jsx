@@ -19,7 +19,7 @@ import point_up from "../../assets/point_up.png";
 import { useContext, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const UserActions = ({ ws,modId }) => {
+const UserActions = ({ ws, modId,turnsBlocked }) => {
   const auth = useContext(AuthContext);
   const history = useHistory();
 
@@ -43,27 +43,38 @@ const UserActions = ({ ws,modId }) => {
       });
   };
 
-  /* LOCKING AND UNLOCKING TURNS */
-  const [isThreeLocked, setIsThreeLocked] = useState(false);
-  const [isTwoLocked, setIsTwoLocked] = useState(false);
-  const [isOneLocked, setIsOneLocked] = useState(false);
+  /* BLOQUEAR Y DESBLOQUEAR TURNOS */
 
-  const handleThreeLock = () => {
-    setIsThreeLocked(!isThreeLocked);
+  const handleToggleBlockTurns = () => {
+    //true -> está bloqueado
+    // false -> no está bloqueado
+    ws.send(
+      JSON.stringify({
+        request: "switch_block_turns"
+      })
+    );
   };
 
-  const handleTwoLock = () => {
-    setIsTwoLocked(!isTwoLocked);
-  };
+  /* PETICIONES PARA AÑADIR TURNOS */
 
-  const handleOneLock = () => {
-    setIsOneLocked(!isOneLocked);
-  };
+  const [isRodeoReady, setIsRodeoReady] = useState(true);
 
-  /* REQUESTS FOR ADDING TURNS */
   const handleAddTurn = (type) => {
-    console.log("llamadas")
-    ws.send(JSON.stringify({ request: "add_turn", turn_type: type }));
+    if (type === "Rodeo" && isRodeoReady) {
+      ws.send(
+        JSON.stringify({
+          request: "add_volatile_turn",
+          turn_type: type,
+          full_name: auth.username,
+        })
+      );
+      setIsRodeoReady(false);
+      setTimeout(() => {
+        setIsRodeoReady(true);
+      }, 60000);
+    } else {
+      ws.send(JSON.stringify({ request: "add_turn", turn_type: type }));
+    }
   };
 
   return (
@@ -88,17 +99,12 @@ const UserActions = ({ ws,modId }) => {
           }
           w="100px"
           h="100px"
-          isDisabled={isThreeLocked}
+          isDisabled={turnsBlocked || !isRodeoReady}
           onClick={() => handleAddTurn("Rodeo")}
+          bgColor="primary"
         >
           <Image w="100px" draggable={false} src={point_three} />
         </Button>
-        {auth.userId === modId && <IconButton
-          colorScheme={isThreeLocked ? "green" : "red"}
-          icon={isThreeLocked ? <UnlockIcon /> : <LockIcon />}
-          onClick={handleThreeLock}
-        />}
-        
       </HStack>
 
       <HStack>
@@ -108,16 +114,11 @@ const UserActions = ({ ws,modId }) => {
           }
           w="100px"
           h="100px"
-          isDisabled={isTwoLocked}
+          isDisabled={turnsBlocked}
           onClick={() => handleAddTurn("Directo")}
         >
           <Image w="100px" draggable={false} src={point_two} />
         </Button>
-        {auth.userId === modId &&  <IconButton
-          colorScheme={isTwoLocked ? "green" : "red"}
-          icon={isTwoLocked ? <UnlockIcon /> : <LockIcon />}
-          onClick={handleTwoLock}
-        />}
       </HStack>
 
       <HStack>
@@ -127,31 +128,35 @@ const UserActions = ({ ws,modId }) => {
           }
           w="100px"
           h="100px"
-          isDisabled={isOneLocked}
+          isDisabled={turnsBlocked}
           onClick={() => handleAddTurn("Normal")}
         >
           <Image w="100px" draggable={false} src={point_up} />
         </Button>
-        {auth.userId === modId && <IconButton
-          colorScheme={isOneLocked ? "green" : "red"}
-          icon={isOneLocked ? <UnlockIcon /> : <LockIcon />}
-          onClick={handleOneLock}
-        />}
       </HStack>
 
       <Spacer />
 
+      {auth.userId === modId && (
+        <IconButton
+          colorScheme={turnsBlocked ? "green" : "red"}
+          icon={turnsBlocked ? <UnlockIcon /> : <LockIcon />}
+          onClick={handleToggleBlockTurns}
+        />
+      )}
 
-      <Button
-        boxShadow={
-          "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
-        }
-        colorScheme={"red"}
-        w="210px"
-        onClick={handleEndMeeting}
-      >
-        Terminar reunión
-      </Button>
+      {auth.userId === modId && (
+        <Button
+          boxShadow={
+            "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
+          }
+          colorScheme={"red"}
+          w="210px"
+          onClick={handleEndMeeting}
+        >
+          Terminar reunión
+        </Button>
+      )}
     </VStack>
   );
 };

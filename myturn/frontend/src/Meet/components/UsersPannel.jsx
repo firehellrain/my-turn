@@ -22,7 +22,7 @@ const UsersPannel = ({ users,ws,modId,setMod }) => {
     ws.send( JSON.stringify({ request: "change_mod",new_mod:id }));
     auth.toggleMod(false); //el usuario deja de ser moderador
     setMod(false);
-    ws.send(JSON.stringify({ request: "get_user_list" }));
+    /* ws.send(JSON.stringify({ request: "get_user_list" })); */
   }
 
   const [formatedUsers, setFormatedUsers] = useState([]);

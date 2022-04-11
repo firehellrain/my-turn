@@ -7,10 +7,14 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import TurnCard from "./TurnCard";
+import { AuthContext } from "../../../shared/context/auth-context";
 
-const Turns = ({ title, turns, ws, users }) => {
+import { useContext } from "react";
+
+
+const Turns = ({ title, turns, ws, users, modId }) => {
   const textColor = useColorModeValue("black", "white");
-
+  const auth = useContext(AuthContext);
 
   return (
     <VStack w="100%" spacing="10" mt="10">
@@ -57,7 +61,7 @@ const Turns = ({ title, turns, ws, users }) => {
           turns.map((turn) => {
             return (
               <TurnCard
-                isMain={false}
+                isMain={!(auth.userId === modId)}
                 key={turn.id}
                 name={users[turn.turn_user_id]}
                 turn_type={turn.turn_type}
