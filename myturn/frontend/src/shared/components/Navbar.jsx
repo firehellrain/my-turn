@@ -63,7 +63,7 @@ const Navbar = () => {
       />
       {auth.isLoggedIn && (
         <HStack>
-          <Avatar h="40px" w="40px" name="pablo perez" bgColor={"primary"} />
+          <Avatar h="40px" w="40px" name={auth.username} />
           <MotionTriangle
             cursor="pointer"
             initial="withdrawn"

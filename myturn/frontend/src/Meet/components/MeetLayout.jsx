@@ -44,7 +44,6 @@ const MeetLayout = ({ meet }) => {
 
     if (data.hasOwnProperty("turn_list")) {
       //si recibimos datos del tipo turn_list
-
       console.log("se ha recibido una lista de turnos")
 
       /* console.log("turn list es: ");
@@ -60,21 +59,15 @@ const MeetLayout = ({ meet }) => {
     setWs(new WebSocket(`ws://localhost:8000/ws/join_meet/${mid}`));
   };
 
-  /* USER LEAVE */
-  const handleUserLeave = () => {
-    //TODO: implementar lógica del servidor
-    //TODO: maybe poner are you sure you want to leave?
-    history.push("/main");
-  };
 
   return (
     <Grid templateColumns={"1fr 4fr 1.5fr"} h="90vh">
       <GridItem colSpan={1} rowSpan={1} colStart={1}>
-        <UsersPannel users={users} />
+        <UsersPannel users={users} ws={ws}/>
         {/* Muestra lista de usuarios presentes, código de reunión y botón para abandonar */}
       </GridItem>
       <GridItem colSpan={1} rowSpan={1} colStart={2}>
-        <Turns title={meet.meeting_name} turns={turns} ws={ws}/>
+        <Turns title={meet.meeting_name} turns={turns} users={users} ws={ws}/>
         {/* Título de la renunión y turnos */}
       </GridItem>
       <GridItem colSpan={1} rowSpan={1} colStart={3}>
