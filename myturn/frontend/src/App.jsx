@@ -20,15 +20,21 @@ function App() {
   const [token, setToken] = useState(null);
   const [userId,setUserId] = useState(null);
   const [username,setUsername] = useState(null);
+  /* Información sobre el meet */
   const [amIdMod,setAmIMod] = useState(false);
   /* const [currentMeet, setCurrentMeet] = useState(null); */
 
-  const toggleMod = useCallback((modId) => {
+  const toggleMod = useCallback((state) => {
     //true -> is mod
-    //false -> is not mod
-    if(userId === modId){
-      setAmIMod(true);
-    }
+    //false -> not mod
+    setAmIMod(state);
+    //guardamos en localstorage
+    localStorage.setItem(
+      "userMeetData",
+      JSON.stringify({
+        amIMod: state,
+      })
+    );
   })
 
   const login = useCallback((token, expirationDate) => {
@@ -43,7 +49,7 @@ function App() {
       })
     );
 
-    //extra info for user
+    //Información adicional sobre el usuario (Nombre e Id)
     let config = {
       headers: {
         Authorization: "Token " + token,
@@ -77,6 +83,7 @@ function App() {
       });
   }, []);
 
+  /* Deslogeo por petición */
   const logout = useCallback(() => {
     const storedData = JSON.parse(localStorage.getItem("userData"));
 
@@ -102,6 +109,7 @@ function App() {
 
   }, []);
 
+  /* Miramos si hay datos almacenados para logear al usuario con los que tenía antes de abandonar el navegador */
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("userData"));
     if (
@@ -111,6 +119,13 @@ function App() {
     ) {
       login(storedData.token, new Date(storedData.expiration));
     }
+
+    /* Traemos la info sobre si soy mod y lo guardamos en un estado */
+    const storedMeetData = JSON.parse(localStorage.getItem("userMeetData"));
+    if(storedMeetData && storedMeetData.amIMod){
+      setAmIMod(storedMeetData.amIMod)
+    }
+
   }, [login]);
 
   let routes;

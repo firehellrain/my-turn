@@ -50,10 +50,12 @@ const Dashboard = () => {
         console.log("HAS MEET: ", response.data);
         setUserHasMeet(true);
         setCode(response.data.meeting.meeting_id);
+        auth.toggleMod(true); //guardamos en memoria que el usuario es moderador
       })
       .catch((err) => {
         console.log("has meet error: ", err.response.data);
         setUserHasMeet(false);
+        auth.toggleMod(false); //el usuario no es moderador de ninguna reunión
       });
   }, [])
   

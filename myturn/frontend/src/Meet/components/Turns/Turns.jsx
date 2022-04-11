@@ -8,8 +8,9 @@ import {
 import React from "react";
 import TurnCard from "./TurnCard";
 
-const Turns = ({ title, turns, ws }) => {
+const Turns = ({ title, turns, ws, users }) => {
   const textColor = useColorModeValue("black", "white");
+
 
   return (
     <VStack w="100%" spacing="10" mt="10">
@@ -37,7 +38,7 @@ const Turns = ({ title, turns, ws }) => {
           <TurnCard
             isMain={true}
             key={turns[0].id}
-            name={turns[0].turn_type}
+            name={users[turns[0].turn_user_id]}
             turn_type={turns[0].turn_type}
             turn_id={turns[0].id}
             ws={ws}
@@ -58,7 +59,7 @@ const Turns = ({ title, turns, ws }) => {
               <TurnCard
                 isMain={false}
                 key={turn.id}
-                name={turn.turn_type}
+                name={users[turn.turn_user_id]}
                 turn_type={turn.turn_type}
                 turn_id={turn.id}
                 ws={ws}

@@ -1,23 +1,30 @@
-import React, { useEffect, useState } from "react";
 import { Box, Button, Heading, Avatar, HStack, Text,Spinner } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft,faCrown } from "@fortawesome/free-solid-svg-icons";
+import { AuthContext } from "../../shared/context/auth-context";
 /* HOOKS */
+import React, { useEffect, useState,useContext } from "react";
 import { useParams,useHistory } from "react-router-dom";
 
-const UsersPannel = ({ users }) => {
+const UsersPannel = ({ users,ws }) => {
   const { mid } = useParams();
   const history = useHistory();
+  const auth = useContext(AuthContext)
 
-  /* LEAVE BUTTON LOGIC */
+  /* Lógica para el botón de abandonar */
   const handleUserLeave = () => {
     history.push("/main")
   };
 
+  /* Lógica para el cambio de moderador */
+  const handleChangeMod = (id) => {
+    console.log(id)
+  }
+
   const [formatedUsers, setFormatedUsers] = useState([]);
 
   useEffect(() => {
-    /* convertimos */
+    /* convertimos para facilitar luego el map*/
     if (users) {
       var array = [];
 
@@ -26,6 +33,7 @@ const UsersPannel = ({ users }) => {
       setFormatedUsers(array);
       /* console.log(array); */
     }
+
   }, [users]);
 
   return (
@@ -74,7 +82,9 @@ const UsersPannel = ({ users }) => {
               >
                 <Avatar mt="5px" ml="5" h="40px" w="40px" name={user.name} />
                 <Text fontSize={"xl"} maxWidth="180px">{user.name}</Text>
-                <FontAwesomeIcon icon={faCrown} />
+
+                {auth.amIMod && auth.userId.toString() !== user.id && <FontAwesomeIcon onClick={() => handleChangeMod(user.id)} icon={faCrown} />}
+                
               </HStack> 
             );
           }) : <Spinner/>}

@@ -31,6 +31,7 @@ const TurnCard = ({isMain, name, turn_type,turn_id,ws }) => {
     }
   }
 
+
   if(!isMain){
     return (
       <MotionBox
@@ -50,10 +51,10 @@ const TurnCard = ({isMain, name, turn_type,turn_id,ws }) => {
         onDrag={handleDrag}
       >
         <HStack>
-          <Avatar name={name} draggable={false}/>
+          <Avatar userSelect="none" name={name} draggable={false}/>
           <Text fontSize={"lg"}>{name}</Text>
           <Spacer/>
-          <Image w="50px" src={point_two}/>
+          <Image userSelect="none" w="50px" draggable={false} src={turn_type === "Rodeo" ? point_three : (turn_type === "Directo" ? point_two : point_up)}/>
         </HStack>
       </MotionBox>
     );
@@ -69,13 +70,13 @@ const TurnCard = ({isMain, name, turn_type,turn_id,ws }) => {
         boxShadow={
           "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
         }
-
+        userSelect="none" 
       >
         <HStack>
           <Avatar name={name} draggable={false}/>
           <Text fontSize={"lg"}>{name}</Text>
           <Spacer/>
-          <Image w="50px" src={point_two}/>
+          <Image userSelect="none" w="50px" draggable={false} src={turn_type === "Rodeo" ? point_three : (turn_type === "Directo" ? point_two : point_up)}/>
         </HStack>
       </Box>
     );
