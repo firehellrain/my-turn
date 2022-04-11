@@ -5,6 +5,7 @@ from asgiref.sync import async_to_sync
 
 from .aux_funcs.aux_generic import user_not_verified, verify_user
 from .aux_funcs.aux_meeting import (
+    change_mod_from_meeting,
     user_is_mod,
     get_meeting_from_code,
     get_user_list_from_meeting,
@@ -214,8 +215,7 @@ class MeetingConsumer(WebsocketConsumer):
                 new_mod = User.objects.get(pk=event['new_mod'])
 
                 if not user_is_mod(new_mod):
-                    self.meeting.meeting_mod = new_mod
-                    self.meeting.save()
+                    change_mod_from_meeting(self.meeting, new_mod)
                 else: 
                     self.send(text_data=json.dumps({
                         'error': "El usuario ya es moderador de una reunión",

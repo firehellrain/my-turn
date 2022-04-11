@@ -19,6 +19,13 @@ def user_is_mod(user):
     """
     return Meeting.objects.filter(meeting_mod=user).exists()
 
+def change_mod_from_meeting(meeting, user):
+    """
+        Cambia al moderador de la reunión
+    """
+    meeting.meeting_mod = user
+    meeting.save()
+
 def create_meeting(user, meetname):
     """
         Crea una reunión con el usuario dado como moderador
