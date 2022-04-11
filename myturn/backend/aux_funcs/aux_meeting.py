@@ -51,11 +51,19 @@ def delete_meet_from_code(meeting_code):
         meet.delete()
     meeting.delete()
 
-def get_user_list_from_meeting(meeting):
+def get_user_list_from_meeting_code(meeting_code):
     """
         Devuelve la lista de usuarios conectados a una reunión
     """
+    meeting = get_meeting_from_code(meeting_code)
     return MeetingUserList.objects.filter(meeting_id=meeting)
+
+def get_mod_from_meeting_code(meeting_code):
+    """
+        Devuelve el moderador de la reunión
+    """
+    meeting = get_meeting_from_code(meeting_code)
+    return meeting.meeting_mod
 
 def user_is_connected_to_meet(user):
     """

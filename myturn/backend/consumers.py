@@ -8,7 +8,8 @@ from .aux_funcs.aux_meeting import (
     change_mod_from_meeting_code,
     user_is_mod,
     get_meeting_from_code,
-    get_user_list_from_meeting,
+    get_user_list_from_meeting_code,
+    get_mod_from_meeting_code,
     user_is_connected_to_meet,
     connect_user_to_meet,
     disconnect_user_from_meet
@@ -148,7 +149,7 @@ class MeetingConsumer(WebsocketConsumer):
             Se asume que la reunión dada siempre va a existir.
         """
         if self.user.is_authenticated:
-            user_list = get_user_list_from_meeting(self.meeting).values_list('user', flat=True)
+            user_list = get_user_list_from_meeting_code(self.meeting_code).values_list('user', flat=True)
             username_list = {}
 
             for u in user_list:
@@ -156,7 +157,7 @@ class MeetingConsumer(WebsocketConsumer):
 
             self.send(text_data=json.dumps({
                 'user_list': username_list,
-                'meeting_mod': self.meeting.meeting_mod.pk
+                'meeting_mod': get_mod_from_meeting_code(self.meeting_code).pk
             }))
         else:
             user_not_verified(self)
@@ -204,7 +205,7 @@ class MeetingConsumer(WebsocketConsumer):
         """
 
         if self.user.is_authenticated:
-            if self.meeting.meeting_mod == self.user:
+            if get_mod_from_meeting_code(self.meeting_code) == self.user:
                 
                 new_mod = User.objects.get(pk=event['new_mod'])
 
