@@ -78,15 +78,6 @@ class MeetingConsumer(WebsocketConsumer):
                         'type': "get_turn_list",
                     }
                 )
-            elif request == "block_turn":
-                async_to_sync(self.channel_layer.group_send)(
-                    self.channel_name,
-                    {
-                        'type': request,
-                        'action': text_data_json['action'],
-                        'turn_type': text_data_json['turn_type'],
-                    }
-                )
             elif request == "add_volatile_turn":
                 async_to_sync(self.channel_layer.group_send)(
                     self.meeting_code,
@@ -123,12 +114,6 @@ class MeetingConsumer(WebsocketConsumer):
                     self.meeting_code,
                     {
                         'type': request,
-                    }
-                )
-                async_to_sync(self.channel_layer.group_send)(
-                    self.meeting_code,
-                    {
-                        'type': "get_user_list",
                     }
                 )
         except:
@@ -201,24 +186,7 @@ class MeetingConsumer(WebsocketConsumer):
                 }))
         else:
             user_not_verified(self)
-
-    def block_turn(self, event):
-        """ 
-            Bloquea un tipo de turno a los usuarios
-        """
-        if self.user.is_authenticated:
-            if get_mod_from_meeting_code(self.meeting_code) == self.user: 
-                self.send(text_data=json.dumps({
-                    'action': event['action'],
-                    'turn_type': event['turn_type'],
-                }))
-            else:
-                self.send(text_data=json.dumps({
-                    'error': "El usuario solicitante no es moderador de la reunión",
-                })) 
-        else:
-            user_not_verified(self)
-
+    
     def add_volatile_turn(self, event):
         """ 
             Solicita un turno volátil a nombre del usuario 
