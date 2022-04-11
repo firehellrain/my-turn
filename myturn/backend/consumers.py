@@ -78,6 +78,15 @@ class MeetingConsumer(WebsocketConsumer):
                         'type': "get_turn_list",
                     }
                 )
+            elif request == "add_volatile_turn":
+                async_to_sync(self.channel_layer.group_send)(
+                    self.meeting_code,
+                    {
+                        'type': request,
+                        'full_name': text_data_json['full_name'],
+                        'turn_type': text_data_json['turn_type'],
+                    }
+                )
             elif request == "delete_turn":
                 async_to_sync(self.channel_layer.send)(
                     self.channel_name,
@@ -175,6 +184,20 @@ class MeetingConsumer(WebsocketConsumer):
                 self.send(text_data=json.dumps({
                     'error': 'El usuario ya tiene un turno pedido.',
                 }))
+        else:
+            user_not_verified(self)
+
+    def add_volatile_turn(self, event):
+        """ 
+            Solicita un turno volátil a nombre del usuario 
+            dentro de una reunión. Este turno no se cuenta
+            como si tuviera ya un turno pedido
+        """
+        if self.user.is_authenticated:
+            self.send(text_data=json.dumps({
+                'full_name': event['full_name'],
+                'v_turn': event['turn_type'],
+            }))
         else:
             user_not_verified(self)
 
