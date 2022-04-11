@@ -17,6 +17,8 @@ const MeetLayout = ({ meet }) => {
   const [users, setUsers] = useState(null);
   const [mod,setMod] = useState(null); // Para comprobar si el usuario es moderador
 
+  const toast = useToast()
+
   /* WEBSOCKET */
 
   const [ws, setWs] = useState(
@@ -44,8 +46,18 @@ const MeetLayout = ({ meet }) => {
       //si recibimos datos del tipo turn_list
       console.log("se ha recibido una lista de turnos")
 
+      /* console.log("turn list es: ");
+      console.log(data.turn_list); */
       setTurns(data.turn_list);
-      console.log(data.turn_list[data.turn_list.length-1]);
+      if(data.turn_list && data.turn_list[data.turn_list.length-1].turn_type === "Rodeo"){
+        toast({
+          title: 'Account created.',
+          description: "We've created your account for you.",
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        })
+      }
     } else if (data.hasOwnProperty("user_list")) {
       setUsers(data.user_list);
       setMod(data.meeting_mod);
@@ -67,7 +79,7 @@ const MeetLayout = ({ meet }) => {
   return (
     <Grid templateColumns={"1fr 4fr 1.5fr"} h="90vh">
       <GridItem colSpan={1} rowSpan={1} colStart={1}>
-        <UsersPannel users={users} ws={ws} modId={mod}/>
+        <UsersPannel users={users} ws={ws} modId={mod} setMod={setMod}/>
         {/* Muestra lista de usuarios presentes, código de reunión y botón para abandonar */}
       </GridItem>
       <GridItem colSpan={1} rowSpan={1} colStart={2}>

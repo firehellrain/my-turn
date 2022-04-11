@@ -6,7 +6,7 @@ import { AuthContext } from "../../shared/context/auth-context";
 import React, { useEffect, useState,useContext } from "react";
 import { useParams,useHistory } from "react-router-dom";
 
-const UsersPannel = ({ users,ws,modId }) => {
+const UsersPannel = ({ users,ws,modId,setMod }) => {
   const { mid } = useParams();
   const history = useHistory();
   const auth = useContext(AuthContext)
@@ -21,6 +21,8 @@ const UsersPannel = ({ users,ws,modId }) => {
     console.log(id)
     ws.send( JSON.stringify({ request: "change_mod",new_mod:id }));
     auth.toggleMod(false); //el usuario deja de ser moderador
+    setMod(false);
+    ws.send(JSON.stringify({ request: "get_user_list" }));
   }
 
   const [formatedUsers, setFormatedUsers] = useState([]);
