@@ -1,18 +1,44 @@
-import React from "react";
-import { Box, Button, Heading, Avatar, HStack, Text } from "@chakra-ui/react";
-import axios from "axios";
+import { Box, Button, Heading, Avatar, HStack, Text,Spinner } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-
+import { faArrowLeft,faCrown } from "@fortawesome/free-solid-svg-icons";
+import { AuthContext } from "../../shared/context/auth-context";
 /* HOOKS */
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState,useContext } from "react";
+import { useParams,useHistory } from "react-router-dom";
 
-const UsersPannel = () => {
+const UsersPannel = ({ users,ws,modId,setMod }) => {
   const { mid } = useParams();
+  const history = useHistory();
+  const auth = useContext(AuthContext)
 
-  /* LEAVE BUTTON LOGIC */
-  const handleUserLeave = () => {};
+  /* Lógica para el botón de abandonar */
+  const handleUserLeave = () => {
+    history.push("/main")
+  };
 
+  /* Lógica para el cambio de moderador */
+  const handleChangeMod = (id) => {
+    console.log(id)
+    ws.send( JSON.stringify({ request: "change_mod",new_mod:id }));
+    auth.toggleMod(false); //el usuario deja de ser moderador
+    setMod(false);
+    /* ws.send(JSON.stringify({ request: "get_user_list" })); */
+  }
+
+  const [formatedUsers, setFormatedUsers] = useState([]);
+
+  useEffect(() => {
+    /* convertimos para facilitar luego el map*/
+    if (users) {
+      var array = [];
+
+      for (let i in users) array.push({name: users[i],id:i});
+
+      setFormatedUsers(array);
+      /* console.log(array); */
+    }
+
+  }, [users]);
 
   return (
     <Box
@@ -24,8 +50,17 @@ const UsersPannel = () => {
       minWidth={"300px"}
       textAlign="center"
     >
-      <Button mt="5" fontSize={"xl"} variant="ghost" borderWidth={"3px"} colorScheme={"red"} w="200px">
-        <FontAwesomeIcon icon={faArrowLeft} style={{"marginRight":"10px"}}/>Abandonar
+      <Button
+        mt="5"
+        fontSize={"xl"}
+        variant="ghost"
+        borderWidth={"3px"}
+        colorScheme={"red"}
+        w="200px"
+        onClick={handleUserLeave}
+      >
+        <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: "10px" }} />
+        Abandonar
       </Button>
       <Heading fontSize={"2xl"} mt="5" mb="5vh">
         Código: {mid}
@@ -35,25 +70,29 @@ const UsersPannel = () => {
       </Box>
 
       <Box pt="1px" maxH={"75%"} overflowY={"auto"}>
+        {users ?
+          formatedUsers.map((user) => {
+            return (
+              <HStack
+                w="100%"
+                h="60px"
+                borderTopWidth={"1px"}
+                mt="-1px"
+                borderBottomWidth={"1px"}
+                textAlign="left"
+                spacing="10px"
+                userSelect={"none"}
+                key={user.id}
+              >
+                <Avatar mt="5px" ml="5" h="40px" w="40px" name={user.name} />
+                <Text fontSize={"xl"} maxWidth="180px">{user.name}</Text>
 
-          {/* TODO: temporal poner dinámico */}
-  
-          <HStack
-            w="100%"
-            h="60px"
-            borderTopWidth={"1px"}
-            mt="-1px"
-            borderBottomWidth={"1px"}
-            textAlign="left"
-            spacing="10px"
-            userSelect={"none"}
-          >
-            <Avatar mt="5px" ml="5" h="40px" w="40px" name="Test test" />
-            <Text fontSize={"xl"}>Test testing</Text>
-          </HStack>
- 
-
-
+                {auth.userId === modId && auth.userId.toString() !== user.id && <FontAwesomeIcon onClick={() => handleChangeMod(user.id)} icon={faCrown} />}
+                
+              </HStack> 
+            );
+          }) : <Spinner/>}
+          {/* TODO: mejorar spinner */}
       </Box>
     </Box>
   );

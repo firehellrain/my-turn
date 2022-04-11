@@ -19,7 +19,8 @@ import { motion, useAnimation } from "framer-motion";
 
 import { useHistory } from "react-router-dom";
 
-import logo from '../../assets/logo.png'
+import logo from '../../assets/logo.png';
+import logoBlanco from '../../assets/logoBlanco.png';
 
 const MotionTriangle = motion(TriangleDownIcon);
 
@@ -49,7 +50,7 @@ const Navbar = () => {
   return (
     <HStack p="3" spacing="4" borderBottomWidth="1px" bgColor={navbarBg} boxShadow={"rgba(0, 0, 0, 0.1) 0px 4px 12px;"} >
       <HStack spacing="5" onClick={() => {history.push("/main")}} cursor="pointer">
-      <Image src={logo} w="30px" ml="20px"/>
+      <Image src={colorMode == "dark" ? logoBlanco : logo} w="30px" ml="20px"/>
       <Heading fontSize={"2xl"}>MyTurn!</Heading>
       </HStack>
       <Spacer />
@@ -62,7 +63,7 @@ const Navbar = () => {
       />
       {auth.isLoggedIn && (
         <HStack>
-          <Avatar h="40px" w="40px" name="pablo perez" bgColor={"primary"} />
+          <Avatar h="40px" w="40px" name={auth.username} />
           <MotionTriangle
             cursor="pointer"
             initial="withdrawn"

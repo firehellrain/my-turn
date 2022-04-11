@@ -20,12 +20,15 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 
 /* hooks */
-import React, { useState, useContext } from "react";
+import React, { useState, useContext,useEffect } from "react";
 /* import { useNavigate } from "react-router"; */
 import { useHistory } from "react-router-dom";
 
 /* assets */
+/* TODO: buscar logos buenos */
 import LogoBlanco from "../assets/LogoBlanco.png";
+import LogoUMA from "../assets/Logo_UMA.png";
+import LogoInformatica from "../assets/LogoInformatica.png"
 
 /* custom elements */
 import { AuthContext } from "../shared/context/auth-context";
@@ -34,7 +37,7 @@ import { AuthContext } from "../shared/context/auth-context";
 TODO: cambiar color de boton de inicio de sesión
 TODO: poner slider con distinta info
 */
-
+const MotionBox = motion(Box);
 const MotionImage = motion(Image);
 
 const Login = () => {
@@ -78,8 +81,6 @@ const Login = () => {
         .then((response) => {
           console.log(response);
           setIsLoading(false);
-          //TODO: REMOVE
-          /* console.log(response.data.token); */
           auth.login(response.data.token);
           
           history.push("main");
@@ -90,6 +91,24 @@ const Login = () => {
         });
     }
   };
+
+  /* CARROUSEL */
+  const [slide, setSlide] = useState(1)
+  const variants = {
+    active: { scale:1.2 },
+    inactive: { scale:1 },
+  }
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSlide(slide + 1);
+      if(slide == 3) setSlide(1);
+    }, 5000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [slide]);
 
   return (
     <Center
@@ -130,7 +149,7 @@ const Login = () => {
           <MotionImage
             w="30%"
             userSelect={"none"}
-            src={LogoBlanco}
+            src={slide == 1 ? LogoBlanco : LogoUMA}
             animate={{ transform: "rotate(360deg)" }}
             transition={{ duration: 0.75 }}
           />
@@ -148,26 +167,35 @@ const Login = () => {
               borderColor={"white"}
             />
             <HStack pt="10">
-              <Box
+              <MotionBox
                 w="3"
                 h="3"
                 cursor={"pointer"}
                 borderRadius={"100%"}
-                bgColor="whiteAlpha.700"
+                bgColor={slide == 1 ? "white" : "whiteAlpha.700"}
+                onClick={() => setSlide(1)}
+                variants={variants}
+                animate={slide == 1 ? "active" : "inactive"}
               />
-              <Box
+              <MotionBox
                 w="3"
                 h="3"
                 cursor={"pointer"}
                 borderRadius={"100%"}
-                bgColor="white"
+                bgColor={slide == 2 ? "white" : "whiteAlpha.700"}
+                onClick={() => setSlide(2)}
+                variants={variants}
+                animate={slide == 2 ? "active" : "inactive"}
               />
-              <Box
+              <MotionBox
                 w="3"
                 h="3"
                 cursor={"pointer"}
                 borderRadius={"100%"}
-                bgColor="whiteAlpha.700"
+                bgColor={slide == 3 ? "white" : "whiteAlpha.700"}
+                onClick={() => setSlide(3)}
+                variants={variants}
+                animate={slide == 3 ? "active" : "inactive"}
               />
             </HStack>
           </VStack>

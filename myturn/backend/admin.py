@@ -10,7 +10,8 @@ class MeetingAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Meeting ID', {'fields': ['meeting_id']}),
         ('Meeting Moderator', {'fields':['meeting_mod']}),
-        ('Meeting Name', {'fields':['meeting_name']})
+        ('Meeting Name', {'fields':['meeting_name']}),
+        ('Block Turns', {'fields':['block_turns']}),
     ]
     inlines = [TurnInLine]
 

@@ -4,6 +4,7 @@ import {
   Button,
   Input,
   useColorModeValue,
+  useColorMode,
   Text,
   HStack,
   Image,
@@ -20,6 +21,7 @@ import { AuthContext } from "../shared/context/auth-context";
 
 import Illustration from "../assets/dashboardImg.svg";
 import MyTurnLogo from "../assets/MyTurnLogo.svg";
+import MyTurnLogoBlanco from "../assets/MyTurnLogoBlanco.svg";
 import axios from "axios";
 
 const MotionButton = motion(Button);
@@ -28,13 +30,14 @@ const Dashboard = () => {
   const history = useHistory();
   const auth = useContext(AuthContext);
   const borderColor = useColorModeValue("black", "white");
+  const { colorMode } = useColorMode();
   const isMobile = useMediaQuery('max-width:1200px'); /* FIXME:  */
 
   /* ON REFRESH CHECK IF USER HAS MEET */
   const [userHasMeet, setUserHasMeet] = useState(false);
   useEffect(() => {
 
-    console.log(isMobile);
+    //console.log(isMobile);
     let config = {
       headers: {
         Authorization: "Token " + auth.token,
@@ -42,15 +45,17 @@ const Dashboard = () => {
     };
 
     axios
-      .get(`http://localhost:8000/backend/user_has_meet`, config)
+      .get(`http://localhost:8000/backend/has_meet`, config)
       .then((response) => {
-        /* console.log("HAS MEET: ", response.data); */
+        console.log("HAS MEET: ", response.data);
         setUserHasMeet(true);
         setCode(response.data.meeting.meeting_id);
+        auth.toggleMod(true); //guardamos en memoria que el usuario es moderador
       })
       .catch((err) => {
-        console.log("has meet error: ", err);
+        console.log("has meet error: ", err.response.data);
         setUserHasMeet(false);
+        auth.toggleMod(false); //el usuario no es moderador de ninguna reunión
       });
   }, [])
   
@@ -129,6 +134,8 @@ const Dashboard = () => {
         console.log(response.data);
         setCode(response.data.meeting.meeting_id)
         setLoadingCreateMeet(false);
+        /* PONEMOS AL USUARIO COMO MODERADOR */
+        auth.toggleMod(response.data.meeting.meeting_mod) 
         // redirigir a la reunión si se ha podido crear
         history.push(`/meet/${response.data.meeting.meeting_id}`);
       })
@@ -153,7 +160,7 @@ const Dashboard = () => {
           userSelect="none"
         />
         <Heading borderBottomWidth="2px" pb="10px" borderColor={borderColor}>
-          Contecta con otros usuarios
+          Conecta con otros usuarios
         </Heading>
         <Text textAlign={"center"} fontSize="xl" w="60%">
           Consigue el código de la reunión para unirte a una sesión.
@@ -259,7 +266,7 @@ const Dashboard = () => {
           w="60%"
           minWidth={"400px"}
           maxWidth="600px"
-          src={MyTurnLogo}
+          src={colorMode == "dark" ? MyTurnLogoBlanco : MyTurnLogo}
           draggable={false}
           userSelect="none"
         />

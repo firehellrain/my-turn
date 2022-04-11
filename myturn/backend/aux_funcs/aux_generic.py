@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 from random import randint
 from backend.models import Meeting
-from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import AnonymousUser
 import json
@@ -25,17 +24,7 @@ def generate_unique_meeting():
             break
     return code
 
-def create_meeting(id, name, mod):
-    """
-        Crea una reunión con la id, el nombre de reunión y el moderador dados
-    """
-    return Meeting.objects.create(meeting_id=id, meeting_name=name, meeting_mod=mod)
-
-def create_user(name, pw):
-    """
-        Crea un usuario con el nombre y la contraseña dados
-    """
-    return User.objects.create_user(username=name, password=pw)
+# Websocket Aux Functions
 
 def user_not_verified(self):
     """
