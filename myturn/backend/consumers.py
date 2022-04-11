@@ -17,6 +17,8 @@ from .aux_funcs.aux_meeting import (
 from .aux_funcs.aux_turn import (
     get_turn_list_from_meet_code,
     user_add_turn,
+    switch_block_turns_from_meeting_code,
+    get_block_turns_from_meeting_code,
     delete_turn_from_meeting, 
     get_turn_from_meeting
 )
@@ -207,6 +209,23 @@ class MeetingConsumer(WebsocketConsumer):
         else:
             user_not_verified(self)
 
+    def switch_block_turns(self, event):
+        """ 
+            Cambia el estado de las solicitudes de turno.
+        """
+        if self.user.is_authenticated:
+            if get_mod_from_meeting_code(self.meeting_code) == self.user:
+                switch_block_turns_from_meeting_code(self.meeting_code)
+                self.send(text_data=json.dumps({
+                    'status': get_block_turns_from_meeting_code(self.meeting_code),
+                }))
+            else:
+                self.send(text_data=json.dumps({
+                    'error': "El usuario solicitante no es moderador de la reunión",
+                }))
+        else:
+            user_not_verified(self)
+
     def delete_turn(self, event):
         """ 
             Borra el turno con la id indicada de la reunión
@@ -235,7 +254,6 @@ class MeetingConsumer(WebsocketConsumer):
 
         if self.user.is_authenticated:
             if get_mod_from_meeting_code(self.meeting_code) == self.user:
-                
                 new_mod = User.objects.get(pk=event['new_mod'])
 
                 if not user_is_mod(new_mod):

@@ -45,6 +45,22 @@ def user_add_turn(user, meeting, turn_type):
     """
     meeting.turn_set.create(turn_type=turn_type, turn_user=user)
 
+def switch_block_turns_from_meeting_code(meeting_code):
+    """
+        Cambia el estado de las solicitudes de turno
+    """
+    meeting = get_meeting_from_code(meeting_code)
+    status = True if meeting.block_turns else False
+    meeting.block_turns = not status
+    meeting.save()
+
+def get_block_turns_from_meeting_code(meeting_code):
+    """
+        Devuelve el estado de las solicitudes de turno
+    """
+    meeting = get_meeting_from_code(meeting_code)
+    return meeting.block_turns
+
 def delete_turn_from_meeting(meeting, turn_id):
     """
         Borra el turno con la id solicitada
