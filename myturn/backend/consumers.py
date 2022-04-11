@@ -211,11 +211,16 @@ class MeetingConsumer(WebsocketConsumer):
             devuelve un aviso de error.
         """
         if self.user.is_authenticated:
-            try:
-                user_add_turn(self.user, self.meeting, event['turn_type'])
-            except:
+            if not get_block_turns_from_meeting_code(self.meeting_code):
+                try:
+                    user_add_turn(self.user, self.meeting, event['turn_type'])
+                except:
+                    self.send(text_data=json.dumps({
+                        'error': 'El usuario ya tiene un turno pedido.',
+                    }))
+            else:
                 self.send(text_data=json.dumps({
-                    'error': 'El usuario ya tiene un turno pedido.',
+                    'error': 'No se pueden solicitar más turnos.',
                 }))
         else:
             user_not_verified(self)
@@ -227,10 +232,15 @@ class MeetingConsumer(WebsocketConsumer):
             como si tuviera ya un turno pedido
         """
         if self.user.is_authenticated:
-            self.send(text_data=json.dumps({
-                'full_name': event['full_name'],
-                'v_turn': event['turn_type'],
-            }))
+            if not get_block_turns_from_meeting_code(self.meeting_code):
+                self.send(text_data=json.dumps({
+                    'full_name': event['full_name'],
+                    'v_turn': event['turn_type'],
+                }))
+            else:
+                self.send(text_data=json.dumps({
+                    'error': 'No se pueden solicitar más turnos.',
+                }))
         else:
             user_not_verified(self)
 
