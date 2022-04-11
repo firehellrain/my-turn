@@ -161,7 +161,7 @@ class MeetingConsumer(WebsocketConsumer):
 
             self.send(text_data=json.dumps({
                 'user_list': username_list,
-                'meeting_mod': self.meeting.meeting_mod
+                'meeting_mod': self.meeting.meeting_mod.pk
             }))
         else:
             user_not_verified(self)
