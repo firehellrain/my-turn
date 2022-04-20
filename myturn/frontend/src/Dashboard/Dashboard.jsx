@@ -20,6 +20,7 @@ import { faUsers, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { AuthContext } from "../shared/context/auth-context";
 
 import Illustration from "../assets/dashboardImg.svg";
+import IllustrationDark from "../assets/dashboardImgDark.svg";
 import MyTurnLogo from "../assets/MyTurnLogo.svg";
 import MyTurnLogoBlanco from "../assets/MyTurnLogoBlanco.svg";
 import axios from "axios";
@@ -152,7 +153,7 @@ const Dashboard = () => {
     <HStack w="100%" justify="center" mb="80px" spacing="0" mt="10">
       <VStack spacing={5} maxWidth={"600px"}>
         <Image
-          src={Illustration}
+          src={colorMode == "light" ? Illustration : IllustrationDark}
           w="60%"
           minWidth={"400px"}
           maxWidth="600px"

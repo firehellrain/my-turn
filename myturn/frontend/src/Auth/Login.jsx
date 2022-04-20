@@ -20,23 +20,18 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 
 /* hooks */
-import React, { useState, useContext,useEffect } from "react";
-/* import { useNavigate } from "react-router"; */
+import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 /* assets */
-/* TODO: buscar logos buenos */
 import LogoBlanco from "../assets/LogoBlanco.png";
 import LogoUMA from "../assets/Logo_UMA.png";
-import LogoInformatica from "../assets/LogoInformatica.png"
+import LogoInformatica from "../assets/LogoInformatica.png";
 
-/* custom elements */
 import { AuthContext } from "../shared/context/auth-context";
 
-/* 
-TODO: cambiar color de boton de inicio de sesión
-TODO: poner slider con distinta info
-*/
+/* custom elements */
+
 const MotionBox = motion(Box);
 const MotionImage = motion(Image);
 
@@ -47,6 +42,7 @@ const Login = () => {
   const history = useHistory();
 
   const leftBg = useColorModeValue("secondary", "secondary_dark");
+  const rightBg = useColorModeValue("white","#EAEAEA");
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState(null);
@@ -82,27 +78,31 @@ const Login = () => {
           console.log(response);
           setIsLoading(false);
           auth.login(response.data.token);
-          
+
           history.push("main");
         })
         .catch((err) => {
           setIsLoading(false);
-          if (err.response) setError(err.response.statusText);
+          console.log(err.response);
+          if (err.response){
+            if(err.response.data)setError(err.response.data.non_field_errors[0]);
+  
+          } 
         });
     }
   };
 
-  /* CARROUSEL */
-  const [slide, setSlide] = useState(1)
+  /* CAROUSEL */
+  const [slide, setSlide] = useState(1);
   const variants = {
-    active: { scale:1.2 },
-    inactive: { scale:1 },
-  }
+    active: { scale: 1.2 },
+    inactive: { scale: 1 },
+  };
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSlide(slide + 1);
-      if(slide == 3) setSlide(1);
+      if (slide == 3) setSlide(1);
     }, 5000);
 
     return () => {
@@ -111,11 +111,7 @@ const Login = () => {
   }, [slide]);
 
   return (
-    <Center
-      mt={["10vh", "5vh"]}
-      mb="50px"
-
-    >
+    <Center mt={["10vh", "5vh"]} mb="50px">
       <Flex
         w="50%"
         h="70vh"
@@ -138,20 +134,24 @@ const Login = () => {
           bgColor={leftBg}
           spacing="20"
         >
-          <VStack spacing="5">
-            <Heading mt="20" color="white">
+          <VStack spacing="5" mt="-5">
+            <Heading mt="20" fontSize={"5xl"} color="white">
               MyTurn
             </Heading>
             <Text color="white" fontStyle={"italic"} fontSize={"xl"}>
               Moderación de Reuniones
             </Text>
           </VStack>
+
           <MotionImage
-            w="30%"
+            w="155px"
+            h="155px"
             userSelect={"none"}
-            src={slide == 1 ? LogoBlanco : LogoUMA}
-            animate={{ transform: "rotate(360deg)" }}
-            transition={{ duration: 0.75 }}
+            src={
+              slide == 1 ? LogoBlanco : slide == 2 ? LogoUMA : LogoInformatica
+            }
+            transition={{duration:0.75}}
+            animate={{ transform: "rotate(360deg)", opacity: 1 }}
           />
           <VStack w="100%" spacing="3">
             <Divider
@@ -173,7 +173,9 @@ const Login = () => {
                 cursor={"pointer"}
                 borderRadius={"100%"}
                 bgColor={slide == 1 ? "white" : "whiteAlpha.700"}
-                onClick={() => setSlide(1)}
+                onClick={() => {
+                  setSlide(1);
+                }}
                 variants={variants}
                 animate={slide == 1 ? "active" : "inactive"}
               />
@@ -183,7 +185,9 @@ const Login = () => {
                 cursor={"pointer"}
                 borderRadius={"100%"}
                 bgColor={slide == 2 ? "white" : "whiteAlpha.700"}
-                onClick={() => setSlide(2)}
+                onClick={() => {
+                  setSlide(2);
+                }}
                 variants={variants}
                 animate={slide == 2 ? "active" : "inactive"}
               />
@@ -193,7 +197,9 @@ const Login = () => {
                 cursor={"pointer"}
                 borderRadius={"100%"}
                 bgColor={slide == 3 ? "white" : "whiteAlpha.700"}
-                onClick={() => setSlide(3)}
+                onClick={() => {
+                  setSlide(3);
+                }}
                 variants={variants}
                 animate={slide == 3 ? "active" : "inactive"}
               />
@@ -207,7 +213,7 @@ const Login = () => {
           h="100%"
           borderTopRightRadius={"md"}
           borderBottomRightRadius={"md"}
-          bgColor={"white"}
+          bgColor={rightBg}
           textAlign="left"
           spacing="10"
           justify={"left"}
@@ -276,7 +282,7 @@ const Login = () => {
             onClick={validateUserInput}
           >
             Iniciar Sesión
-          </Button>{" "}
+          </Button>
           {/* TODO: animación */}
           {error && (
             <Box w="80%">

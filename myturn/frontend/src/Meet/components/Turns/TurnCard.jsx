@@ -49,6 +49,7 @@ const TurnCard = ({isMain, name, turn_type,turn_id,ws }) => {
         x={x}
         style={{x,backgroundColor,opacity}}
         onDrag={handleDrag}
+        exit={{scale:0,transition:{duration:0.75}}}
       >
         <HStack>
           <Avatar userSelect="none" name={name} draggable={false}/>

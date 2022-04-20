@@ -10,6 +10,7 @@ import TurnCard from "./TurnCard";
 import { AuthContext } from "../../../shared/context/auth-context";
 
 import { useContext } from "react";
+import { AnimatePresence } from "framer-motion";
 
 
 const Turns = ({ title, turns, ws, users, modId }) => {
@@ -57,6 +58,7 @@ const Turns = ({ title, turns, ws, users, modId }) => {
           w="40%"
         />
 
+        <AnimatePresence>
         {turns &&
           turns.map((turn) => {
             return (
@@ -70,6 +72,7 @@ const Turns = ({ title, turns, ws, users, modId }) => {
               />
             );
           })}
+          </AnimatePresence>
       </VStack>
     </VStack>
   );

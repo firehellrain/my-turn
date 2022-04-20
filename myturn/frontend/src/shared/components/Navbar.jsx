@@ -86,11 +86,9 @@ const Navbar = () => {
               w="200px"
               position={"absolute"}
               right="1"
-              bgColor={"primary"}
               top="60px"
               borderRadius={"md"}
               textAlign="center"
-              background={"transparent"}
               borderWidth="2px"
               zIndex="10"
             >
