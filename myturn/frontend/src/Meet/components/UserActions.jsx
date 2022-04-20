@@ -138,6 +138,18 @@ const UserActions = ({ ws, modId, turnsBlocked }) => {
         />
       )}
 
+        <Button
+          boxShadow={
+            "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
+          }
+          colorScheme={"red"}
+          variant="outline"
+          w="210px"
+
+        >
+          Cancelar turno
+        </Button>
+
       {auth.userId === modId && (
         <Button
           boxShadow={

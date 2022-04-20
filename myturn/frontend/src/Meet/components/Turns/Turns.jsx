@@ -52,7 +52,6 @@ const Turns = ({ title, turns, ws, users, modId }) => {
 
         <Box
           h="2px"
-          borderColor={"black"}
           borderTopWidth="2px"
           pb="20"
           w="40%"
@@ -63,7 +62,7 @@ const Turns = ({ title, turns, ws, users, modId }) => {
           turns.map((turn) => {
             return (
               <TurnCard
-                isMain={!(auth.userId === modId)}
+                isMain={!(auth.userId === modId) && !(auth.userId === turn.turn_user_id) } /* TODO: añadir si es tu propio turno */
                 key={turn.id}
                 name={users[turn.turn_user_id]}
                 turn_type={turn.turn_type}
