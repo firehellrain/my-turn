@@ -62,7 +62,7 @@ const Turns = ({ title, turns, ws, users, modId }) => {
           turns.map((turn) => {
             return (
               <TurnCard
-                isMain={!(auth.userId === modId) && !(auth.userId === turn.turn_user_id) } /* TODO: añadir si es tu propio turno */
+                isMain={!(auth.userId === modId) && !(auth.userId === turn.turn_user_id) } 
                 key={turn.id}
                 name={users[turn.turn_user_id]}
                 turn_type={turn.turn_type}

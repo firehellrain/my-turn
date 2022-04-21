@@ -10,7 +10,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 
-import React, { useState, useContext,useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useMediaQuery } from "@react-hook/media-query";
 
@@ -32,12 +32,11 @@ const Dashboard = () => {
   const auth = useContext(AuthContext);
   const borderColor = useColorModeValue("black", "white");
   const { colorMode } = useColorMode();
-  const isMobile = useMediaQuery('max-width:1200px'); /* FIXME:  */
+  const isMobile = useMediaQuery("(max-width:680px)");
 
   /* ON REFRESH CHECK IF USER HAS MEET */
   const [userHasMeet, setUserHasMeet] = useState(false);
   useEffect(() => {
-
     //console.log(isMobile);
     let config = {
       headers: {
@@ -58,14 +57,12 @@ const Dashboard = () => {
         setUserHasMeet(false);
         auth.toggleMod(false); //el usuario no es moderador de ninguna reunión
       });
-  }, [])
-  
+  }, []);
 
   /* INPUT HANDLING FOR JOINING A MEET */
   const [code, setCode] = useState(null);
   const [loadingAccessMeet, setLoadingAccessMeet] = useState(false);
   const [errorMeetExists, setErrorMeetExists] = useState("");
-  
 
   const handleJoinMeetInput = (e) => {
     setCode(e.target.value);
@@ -79,8 +76,6 @@ const Dashboard = () => {
         Authorization: "Token " + auth.token,
       },
     };
-
-    
 
     axios
       .get(`http://localhost:8000/backend/access_meet/${code}`, config)
@@ -100,19 +95,18 @@ const Dashboard = () => {
   /* FETCHING FUNCTIONS */
   const [meetName, setMeetName] = useState(null);
   const [loadingCreateMeet, setLoadingCreateMeet] = useState(false);
-  const [errorCreateMeet,setErrorCreateMeet] = useState("");
+  const [errorCreateMeet, setErrorCreateMeet] = useState("");
 
   const handleCreateMeetInput = (e) => {
     setMeetName(e.target.value);
   };
 
   const createMeet = () => {
-
-    if(!meetName){
+    if (!meetName) {
       setErrorCreateMeet("¡Debes introducir un nombre de reunión!");
       return;
-    }
-    else if(meetName.trim().length < 1){ //validador de nombre de reunión
+    } else if (meetName.trim().length < 1) {
+      //validador de nombre de reunión
       setErrorCreateMeet("Introduce un nombre válido porfavor");
       return;
     }
@@ -133,68 +127,37 @@ const Dashboard = () => {
       )
       .then((response) => {
         console.log(response.data);
-        setCode(response.data.meeting.meeting_id)
+        setCode(response.data.meeting.meeting_id);
         setLoadingCreateMeet(false);
         /* PONEMOS AL USUARIO COMO MODERADOR */
-        auth.toggleMod(response.data.meeting.meeting_mod) 
+        auth.toggleMod(response.data.meeting.meeting_mod);
         // redirigir a la reunión si se ha podido crear
         history.push(`/meet/${response.data.meeting.meeting_id}`);
       })
       .catch((err) => {
-
         setLoadingCreateMeet(false);
         //filtramos según el código de error
-        if(err.response.status === 400) setErrorCreateMeet("¡Ya eres moderador de una reunión!");
+        if (err.response.status === 400)
+          setErrorCreateMeet("¡Ya eres moderador de una reunión!");
         else setErrorCreateMeet("Algo ha ido mal");
       });
   };
 
-  return (
-    <HStack w="100%" justify="center" mb="80px" spacing="0" mt="10">
-      <VStack spacing={5} maxWidth={"600px"}>
+  if (isMobile) {
+    return (
+      <VStack spacing="10">
         <Image
-          src={colorMode == "light" ? Illustration : IllustrationDark}
           w="60%"
-          minWidth={"400px"}
-          maxWidth="600px"
+          mt="10vh"
+          src={colorMode == "dark" ? MyTurnLogoBlanco : MyTurnLogo}
           draggable={false}
           userSelect="none"
+          maxWidth={"300px"}
         />
-        <Heading borderBottomWidth="2px" pb="10px" borderColor={borderColor}>
-          Conecta con otros usuarios
-        </Heading>
-        <Text textAlign={"center"} fontSize="xl" w="60%">
-          Consigue el código de la reunión para unirte a una sesión.
-        </Text>
-
-        <Heading fontSize="2xl">Únete a una reunión</Heading>
         <VStack spacing="2">
-          {userHasMeet ? (
-            <MotionButton
-              w="200px"
-              bgColor={"primary"}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ duration: 0.025 }}
-              fontSize="lg"
-              onClick={checkMeetExists}
-              isLoading={loadingAccessMeet}
-            >
-              Acceder a reunión 
-              <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faUsers} />
-            </MotionButton>
-          ) : (
-            <>
-              <Input
-                placeholder="Código de la reunión"
-                fontSize="lg"
-                w="200px"
-                maxLength={4}
-                borderColor="primary"
-                borderWidth={"2px"}
-                onChange={handleJoinMeetInput}
-                isInvalid={errorMeetExists}
-              />
+          <Heading fontSize="2xl">Únete a una reunión</Heading>
+          <VStack spacing="2">
+            {userHasMeet ? (
               <MotionButton
                 w="200px"
                 bgColor={"primary"}
@@ -205,75 +168,223 @@ const Dashboard = () => {
                 onClick={checkMeetExists}
                 isLoading={loadingAccessMeet}
               >
-                Entrar
+                Acceder a reunión
                 <FontAwesomeIcon
                   style={{ marginLeft: "10px" }}
                   icon={faUsers}
                 />
-              </MotionButton>{" "}
-            </>
-          )}
-          {errorMeetExists && (
-            <Text w="200px" textAlign={"center"} color="red.600">
-              {errorMeetExists}
-            </Text>
-          )}
+              </MotionButton>
+            ) : (
+              <>
+                <Input
+                  placeholder="Código de la reunión"
+                  fontSize="lg"
+                  w="200px"
+                  maxLength={4}
+                  borderColor="primary"
+                  borderWidth={"2px"}
+                  onChange={handleJoinMeetInput}
+                  isInvalid={errorMeetExists}
+                />
+                <MotionButton
+                  w="200px"
+                  bgColor={"primary"}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.025 }}
+                  fontSize="lg"
+                  onClick={checkMeetExists}
+                  isLoading={loadingAccessMeet}
+                >
+                  Entrar
+                  <FontAwesomeIcon
+                    style={{ marginLeft: "10px" }}
+                    icon={faUsers}
+                  />
+                </MotionButton>{" "}
+              </>
+            )}
+            {errorMeetExists && (
+              <Text w="200px" textAlign={"center"} color="red.600">
+                {errorMeetExists}
+              </Text>
+            )}
+          </VStack>
         </VStack>
-      </VStack>
+        
+        <Text fontSize={"xl"} w="60%" textAlign={"center"} fontStyle="italic">Crea y modera reuniones desde myTurn!</Text>
 
-      <VStack spacing="10" maxWidth={"600px"}>
-        <Heading
-          borderBottomWidth="2px"
-          pb="10px"
-          borderColor={borderColor}
-          pt="5vh"
-        >
-          Crea una reunión
-        </Heading>
-        <Text fontSize={"xl"} w="60%" textAlign={"center"}>
-          Comienza una reunión y comparte el código con aquellos que desees.
-        </Text>
-        <VStack>
-          <Input
-            placeholder="Nombre de la reunión"
-            w="300px"
-            fontSize="lg"
-            maxLength={20}
-            borderColor="primary"
-            borderWidth={"2px"}
-            onChange={handleCreateMeetInput}
-            isInvalid={errorCreateMeet}
-          />
-          <MotionButton
-            w="300px"
-            bgColor={"primary"}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{ duration: 0.025 }}
-            fontSize="lg"
-            onClick={createMeet}
-            isLoading={loadingCreateMeet}
+        <VStack spacing="2" maxWidth={"600px"}>
+          <Heading
+            fontSize="2xl"
           >
-            Crear
-            <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faPlus} />
-          </MotionButton>
-          {errorCreateMeet && (
-            <Text w="250px" textAlign={"center"} color="red.600">
-              {errorCreateMeet}
-            </Text>
-          )}
+            Crea una reunión
+          </Heading>
+
+          <VStack>
+            <Input
+              placeholder="Nombre de la reunión"
+              w="200px"
+              fontSize="lg"
+              maxLength={20}
+              borderColor="primary"
+              borderWidth={"2px"}
+              onChange={handleCreateMeetInput}
+              isInvalid={errorCreateMeet}
+            />
+            <MotionButton
+              w="200px"
+              bgColor={"primary"}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ duration: 0.025 }}
+              fontSize="lg"
+              onClick={createMeet}
+              isLoading={loadingCreateMeet}
+            >
+              Crear
+              <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faPlus} />
+            </MotionButton>
+            {errorCreateMeet && (
+              <Text w="250px" textAlign={"center"} color="red.600">
+                {errorCreateMeet}
+              </Text>
+            )}
+          </VStack>
         </VStack>
-        <Image
-          w="60%"
-          minWidth={"400px"}
-          maxWidth="600px"
-          src={colorMode == "dark" ? MyTurnLogoBlanco : MyTurnLogo}
-          draggable={false}
-          userSelect="none"
-        />
+
       </VStack>
-    </HStack>
-  );
+    );
+  } else {
+    return (
+      <HStack w="100%" justify="center" mb="80px" spacing="0" mt="10">
+        <VStack spacing={5} maxWidth={"600px"}>
+          <Image
+            src={colorMode == "light" ? Illustration : IllustrationDark}
+            w="60%"
+            minWidth={"400px"}
+            maxWidth="600px"
+            draggable={false}
+            userSelect="none"
+          />
+          <Heading borderBottomWidth="2px" pb="10px" borderColor={borderColor}>
+            Conecta con otros usuarios
+          </Heading>
+          <Text textAlign={"center"} fontSize="xl" w="60%">
+            Consigue el código de la reunión para unirte a una sesión.
+          </Text>
+
+          <Heading fontSize="2xl">Únete a una reunión</Heading>
+          <VStack spacing="2">
+            {userHasMeet ? (
+              <MotionButton
+                w="200px"
+                bgColor={"primary"}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ duration: 0.025 }}
+                fontSize="lg"
+                onClick={checkMeetExists}
+                isLoading={loadingAccessMeet}
+              >
+                Acceder a reunión
+                <FontAwesomeIcon
+                  style={{ marginLeft: "10px" }}
+                  icon={faUsers}
+                />
+              </MotionButton>
+            ) : (
+              <>
+                <Input
+                  placeholder="Código de la reunión"
+                  fontSize="lg"
+                  w="200px"
+                  maxLength={4}
+                  borderColor="primary"
+                  borderWidth={"2px"}
+                  onChange={handleJoinMeetInput}
+                  isInvalid={errorMeetExists}
+                />
+                <MotionButton
+                  w="200px"
+                  bgColor={"primary"}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.025 }}
+                  fontSize="lg"
+                  onClick={checkMeetExists}
+                  isLoading={loadingAccessMeet}
+                >
+                  Entrar
+                  <FontAwesomeIcon
+                    style={{ marginLeft: "10px" }}
+                    icon={faUsers}
+                  />
+                </MotionButton>{" "}
+              </>
+            )}
+            {errorMeetExists && (
+              <Text w="200px" textAlign={"center"} color="red.600">
+                {errorMeetExists}
+              </Text>
+            )}
+          </VStack>
+        </VStack>
+
+        <VStack spacing="10" maxWidth={"600px"}>
+          <Heading
+            borderBottomWidth="2px"
+            pb="10px"
+            borderColor={borderColor}
+            pt="5vh"
+          >
+            Crea una reunión
+          </Heading>
+          <Text fontSize={"xl"} w="60%" textAlign={"center"}>
+            Comienza una reunión y comparte el código con aquellos que desees.
+          </Text>
+          <VStack>
+            <Input
+              placeholder="Nombre de la reunión"
+              w="300px"
+              fontSize="lg"
+              maxLength={20}
+              borderColor="primary"
+              borderWidth={"2px"}
+              onChange={handleCreateMeetInput}
+              isInvalid={errorCreateMeet}
+            />
+            <MotionButton
+              w="300px"
+              bgColor={"primary"}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ duration: 0.025 }}
+              fontSize="lg"
+              onClick={createMeet}
+              isLoading={loadingCreateMeet}
+            >
+              Crear
+              <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faPlus} />
+            </MotionButton>
+            {errorCreateMeet && (
+              <Text w="250px" textAlign={"center"} color="red.600">
+                {errorCreateMeet}
+              </Text>
+            )}
+          </VStack>
+          <Image
+            w="60%"
+            minWidth={"400px"}
+            maxWidth="600px"
+            src={colorMode == "dark" ? MyTurnLogoBlanco : MyTurnLogo}
+            draggable={false}
+            userSelect="none"
+          />
+        </VStack>
+      </HStack>
+    );
+  }
 };
 
 export default Dashboard;

@@ -23,6 +23,7 @@ import logo from '../../assets/logo.png';
 import logoBlanco from '../../assets/logoBlanco.png';
 
 const MotionTriangle = motion(TriangleDownIcon);
+const MotionBox = motion(Box);
 
 const Navbar = () => {
   const auth = useContext(AuthContext);
@@ -37,7 +38,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     auth.logout();
-    history.push("/") /* TODO: quizas hay que cambiar para que le de tiempo a deslogearse antes irse */
+    history.push("/") 
   };
 
   const handleDropDownClick = () => {
@@ -81,7 +82,8 @@ const Navbar = () => {
             onClick={handleDropDownClick}
           />
           {isDropped && (
-            <Box
+            
+            <MotionBox
               h="auto"
               w="200px"
               position={"absolute"}
@@ -91,6 +93,9 @@ const Navbar = () => {
               textAlign="center"
               borderWidth="2px"
               zIndex="10"
+              initial={{y:-150}}
+              animate={{y:0}}
+              transition={{duration:0.35}}
             >
               <Button
                 w="100%"
@@ -100,10 +105,11 @@ const Navbar = () => {
               >
                 <Text>Cerrar sesión</Text>
               </Button>
-              <Button w="100%" borderRadius={"md"} borderTopRadius="0">
+              <Button w="100%" borderRadius={"md"} borderTopRadius="0" onClick={() => history.push("/profile")}>
                 <Text>Moficar mi perfil</Text>
               </Button>
-            </Box>
+            </MotionBox>
+            
           )}
         </HStack>
       )}

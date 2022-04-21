@@ -15,6 +15,7 @@ import Footer from "./shared/components/Footer";
 import Navbar from "./shared/components/Navbar";
 import Meet from "./Meet/Meet";
 import Background from "./shared/components/Background";
+import Profile from "./Profile/Profile";
 
 function App() {
   const [token, setToken] = useState(null);
@@ -142,11 +143,13 @@ function App() {
     );
   } else {
     //usuario logeado
-
     routes = (
       <Switch>
         <Route path="/main">
           <Dashboard />
+        </Route>
+        <Route path="/profile">
+          <Profile/>
         </Route>
         <Route path="/meet/:mid">
           <Meet />
