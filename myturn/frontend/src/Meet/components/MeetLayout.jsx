@@ -89,16 +89,16 @@ const MeetLayout = ({ meet }) => {
   return (
     <Grid templateColumns={"1fr 4fr 1.5fr"} h="90vh">
       <GridItem colSpan={1} rowSpan={1} colStart={1}>
-        <UsersPannel users={users} ws={ws} modId={mod} setMod={setMod}/>
         {/* Muestra lista de usuarios presentes, código de reunión y botón para abandonar */}
+        <UsersPannel users={users} ws={ws} modId={mod} setMod={setMod}/>
       </GridItem>
       <GridItem colSpan={1} rowSpan={1} colStart={2}>
-        <Turns title={meet.meeting_name} turns={turns} users={users} ws={ws} modId={mod}/>
         {/* Título de la renunión y turnos */}
+        <Turns title={meet.meeting_name} turns={turns} users={users} ws={ws} modId={mod}/>
       </GridItem>
       <GridItem colSpan={1} rowSpan={1} colStart={3}>
-        <UserActions ws={ws} modId={mod} turnsBlocked={turnsBlocked}/>
         {/* Tipos de turnos, cambio de moderador y botón para eliminar reunión */}
+        <UserActions ws={ws} modId={mod} turnsBlocked={turnsBlocked}/>
       </GridItem>
     </Grid>
   );

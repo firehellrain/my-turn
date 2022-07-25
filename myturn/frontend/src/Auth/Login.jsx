@@ -93,6 +93,15 @@ const Login = () => {
     }
   };
 
+  /* Enter input with 'Enter' key */
+  const enterPressed = (event) => {
+    var code = event.keyCode || event.which;
+    if (code === 13) {
+      //13 is the enter keycode
+      validateUserInput();
+    }
+  };
+
   /* CAROUSEL */
   const [slide, setSlide] = useState(1);
   const variants = {
@@ -337,6 +346,7 @@ const Login = () => {
                 focusBorderColor="primary"
                 borderColor={"gray.300"}
                 onChange={handleUsernameUpdate}
+                onKeyPress={enterPressed.bind(this)}
               />
             </Box>
             <Box>
@@ -358,6 +368,7 @@ const Login = () => {
                     focusBorderColor="primary"
                     borderColor={"gray.300"}
                     onChange={handlePasswordUpdate}
+                    onKeyPress={enterPressed.bind(this)}
                   />
                   <InputRightElement width="4.5rem">
                     <IconButton
