@@ -17,7 +17,6 @@ const Background = props => {
       backgroundPosition="center center"
       backgroundAttachment={"fixed"}
       overflow="auto"
-
     >{props.children}</Box>
   );
 };
