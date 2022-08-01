@@ -19,7 +19,7 @@ import point_up from "../../assets/point_up.png";
 import { useContext, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const UserActions = ({ ws, modId,turnsBlocked }) => {
+const UserActions = ({ ws, modId, turnsBlocked }) => {
   const auth = useContext(AuthContext);
   const history = useHistory();
 
@@ -50,7 +50,7 @@ const UserActions = ({ ws, modId,turnsBlocked }) => {
     // false -> no está bloqueado
     ws.send(
       JSON.stringify({
-        request: "switch_block_turns"
+        request: "switch_block_turns",
       })
     );
   };
@@ -92,48 +92,41 @@ const UserActions = ({ ws, modId,turnsBlocked }) => {
         Elige tu turno
       </Heading>
 
-      <HStack>
-        <Button
-          boxShadow={
-            "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
-          }
-          w="100px"
-          h="100px"
-          isDisabled={turnsBlocked || !isRodeoReady}
-          onClick={() => handleAddTurn("Rodeo")}
-          bgColor="primary"
-        >
-          <Image w="100px" draggable={false} src={point_three} />
-        </Button>
-      </HStack>
+      <Button
+        boxShadow={
+          "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
+        }
+        w="100px"
+        h="100px"
+        isDisabled={turnsBlocked || !isRodeoReady}
+        onClick={() => handleAddTurn("Rodeo")}
+      >
+        <Image w="100px" draggable={false} src={point_three} />
+      </Button>
 
-      <HStack>
-        <Button
-          boxShadow={
-            "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
-          }
-          w="100px"
-          h="100px"
-          isDisabled={turnsBlocked}
-          onClick={() => handleAddTurn("Directo")}
-        >
-          <Image w="100px" draggable={false} src={point_two} />
-        </Button>
-      </HStack>
+      <Button
+        boxShadow={
+          "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
+        }
+        w="100px"
+        h="100px"
+        isDisabled={turnsBlocked}
+        onClick={() => handleAddTurn("Directo")}
+      >
+        <Image w="100px" draggable={false} src={point_two} />
+      </Button>
 
-      <HStack>
-        <Button
-          boxShadow={
-            "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
-          }
-          w="100px"
-          h="100px"
-          isDisabled={turnsBlocked}
-          onClick={() => handleAddTurn("Normal")}
-        >
-          <Image w="100px" draggable={false} src={point_up} />
-        </Button>
-      </HStack>
+      <Button
+        boxShadow={
+          "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;"
+        }
+        w="100px"
+        h="100px"
+        isDisabled={turnsBlocked}
+        onClick={() => handleAddTurn("Normal")}
+      >
+        <Image w="100px" draggable={false} src={point_up} />
+      </Button>
 
       <Spacer />
 
@@ -144,6 +137,7 @@ const UserActions = ({ ws, modId,turnsBlocked }) => {
           onClick={handleToggleBlockTurns}
         />
       )}
+
 
       {auth.userId === modId && (
         <Button

@@ -3,55 +3,63 @@ import {
   HStack,
   useColorMode,
   Spacer,
-  Avatar,
-  Box,
   Button,
-  Text,
+  Menu,
+  MenuItem,
+  MenuList,
+  MenuButton,
   Image,
   Heading,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { TriangleDownIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { AuthContext } from "../context/auth-context";
-import { useContext, useState } from "react";
-import { motion, useAnimation } from "framer-motion";
 
+import { useContext } from "react";
 import { useHistory } from "react-router-dom";
+import { useMediaQuery } from "@react-hook/media-query";
 
-import logo from '../../assets/logo.png';
-import logoBlanco from '../../assets/logoBlanco.png';
+import logo from "../../assets/logo.png";
+import logoBlanco from "../../assets/logoBlanco.png";
 
-const MotionTriangle = motion(TriangleDownIcon);
 
 const Navbar = () => {
   const auth = useContext(AuthContext);
   const history = useHistory();
-
-  const [isDropped, setIsDropped] = useState(false);
+  const isMobile = useMediaQuery("(max-width:680px)");
 
   const { colorMode, toggleColorMode } = useColorMode();
-  const navbarBg = useColorModeValue('white','#1A202C');
+  const navbarBg = useColorModeValue("white", "#1A202C");
 
-  const dropDownController = useAnimation();
 
   const handleLogout = () => {
     auth.logout();
-    history.push("/") /* TODO: quizas hay que cambiar para que le de tiempo a deslogearse antes irse */
+    history.push("/");
   };
 
-  const handleDropDownClick = () => {
-    setIsDropped(!isDropped);
-    isDropped
-      ? dropDownController.start("withdrawn")
-      : dropDownController.start("dropped");
-  };
 
   return (
-    <HStack p="3" spacing="4" borderBottomWidth="1px" bgColor={navbarBg} boxShadow={"rgba(0, 0, 0, 0.1) 0px 4px 12px;"} >
-      <HStack spacing="5" onClick={() => {history.push("/main")}} cursor="pointer">
-      <Image src={colorMode == "dark" ? logoBlanco : logo} w="30px" ml="20px"/>
-      <Heading fontSize={"2xl"}>MyTurn!</Heading>
+    <HStack
+      p="3"
+      spacing="4"
+      borderBottomWidth="1px"
+      bgColor={navbarBg}
+      boxShadow={"rgba(0, 0, 0, 0.1) 0px 4px 12px;"}
+    >
+      <HStack
+        spacing="5"
+        onClick={() => {
+          history.push("/main");
+        }}
+        cursor="pointer"
+      >
+        <Image
+          src={colorMode == "dark" ? logoBlanco : logo}
+          w="30px"
+          ml="20px"
+        />
+        <Heading fontSize={"2xl"}>MyTurn!</Heading>
       </HStack>
       <Spacer />
       <IconButton
@@ -62,52 +70,16 @@ const Navbar = () => {
         onClick={toggleColorMode}
       />
       {auth.isLoggedIn && (
-        <HStack>
-          <Avatar h="40px" w="40px" name={auth.username} />
-          <MotionTriangle
-            cursor="pointer"
-            initial="withdrawn"
-            animate={dropDownController}
-            variants={{
-              withdrawn: {
-                transform: "rotate(0deg)",
-                transition: { duration: 0.3 },
-              },
-              dropped: {
-                transform: "rotate(180deg)",
-                transition: { duration: 0.3 },
-              },
-            }}
-            onClick={handleDropDownClick}
-          />
-          {isDropped && (
-            <Box
-              h="auto"
-              w="200px"
-              position={"absolute"}
-              right="1"
-              bgColor={"primary"}
-              top="60px"
-              borderRadius={"md"}
-              textAlign="center"
-              background={"transparent"}
-              borderWidth="2px"
-              zIndex="10"
-            >
-              <Button
-                w="100%"
-                borderRadius={"md"}
-                onClick={handleLogout}
-                borderBottomRadius="0"
-              >
-                <Text>Cerrar sesión</Text>
-              </Button>
-              <Button w="100%" borderRadius={"md"} borderTopRadius="0">
-                <Text>Moficar mi perfil</Text>
-              </Button>
-            </Box>
-          )}
-        </HStack>
+        <Menu >
+          <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+            {isMobile ? "Perfil" : auth.username}
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => history.push("/profile")}>Perfil</MenuItem>
+            <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
+          </MenuList>
+        </Menu>
+        
       )}
     </HStack>
   );

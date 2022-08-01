@@ -56,9 +56,8 @@ const MeetLayout = ({ meet }) => {
       setMod(data.meeting_mod);
       
       if(data.meeting_mod === auth.userId){
-        console.log("TAMBIEN DEBERIA PASAR POR AQUI")
-        auth.toggleMod(true); //si el nuevo moderador coincide con el id de usuario lo actualizamosç
-        console.log("usuario con id: " + auth.userId +  " es mod: " +auth.userId === mod);
+        auth.toggleMod(true); //si el nuevo moderador coincide con el id de usuario lo actualizamos
+        /* console.log("usuario con id: " + auth.userId +  " es mod: " +auth.userId === mod); */
       }
     }else if(data.hasOwnProperty("v_turn")){
       toast({
@@ -70,6 +69,14 @@ const MeetLayout = ({ meet }) => {
       })
     }else if(data.hasOwnProperty("status")){
       setTurnsBlocked(data.status); /* Para controlar el bloqueo de los turnos */
+    }else if (data.hasOwnProperty("error")) {
+      toast({
+        title: 'Ya tienes un turno pedido',
+        description: "Debes cancelar tu turno para poder pedir otro nuevo",
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
     }
   };
 
@@ -82,16 +89,16 @@ const MeetLayout = ({ meet }) => {
   return (
     <Grid templateColumns={"1fr 4fr 1.5fr"} h="90vh">
       <GridItem colSpan={1} rowSpan={1} colStart={1}>
-        <UsersPannel users={users} ws={ws} modId={mod} setMod={setMod}/>
         {/* Muestra lista de usuarios presentes, código de reunión y botón para abandonar */}
+        <UsersPannel users={users} ws={ws} modId={mod} setMod={setMod}/>
       </GridItem>
       <GridItem colSpan={1} rowSpan={1} colStart={2}>
-        <Turns title={meet.meeting_name} turns={turns} users={users} ws={ws} modId={mod}/>
         {/* Título de la renunión y turnos */}
+        <Turns title={meet.meeting_name} turns={turns} users={users} ws={ws} modId={mod}/>
       </GridItem>
       <GridItem colSpan={1} rowSpan={1} colStart={3}>
-        <UserActions ws={ws} modId={mod} turnsBlocked={turnsBlocked}/>
         {/* Tipos de turnos, cambio de moderador y botón para eliminar reunión */}
+        <UserActions ws={ws} modId={mod} turnsBlocked={turnsBlocked}/>
       </GridItem>
     </Grid>
   );

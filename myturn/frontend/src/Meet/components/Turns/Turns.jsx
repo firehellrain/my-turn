@@ -10,6 +10,7 @@ import TurnCard from "./TurnCard";
 import { AuthContext } from "../../../shared/context/auth-context";
 
 import { useContext } from "react";
+import { AnimatePresence } from "framer-motion";
 
 
 const Turns = ({ title, turns, ws, users, modId }) => {
@@ -51,17 +52,17 @@ const Turns = ({ title, turns, ws, users, modId }) => {
 
         <Box
           h="2px"
-          borderColor={"black"}
           borderTopWidth="2px"
           pb="20"
           w="40%"
         />
 
+        <AnimatePresence>
         {turns &&
           turns.map((turn) => {
             return (
               <TurnCard
-                isMain={!(auth.userId === modId)}
+                isMain={!(auth.userId === modId) && !(auth.userId === turn.turn_user_id) } 
                 key={turn.id}
                 name={users[turn.turn_user_id]}
                 turn_type={turn.turn_type}
@@ -70,6 +71,7 @@ const Turns = ({ title, turns, ws, users, modId }) => {
               />
             );
           })}
+          </AnimatePresence>
       </VStack>
     </VStack>
   );

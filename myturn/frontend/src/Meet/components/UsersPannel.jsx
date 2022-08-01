@@ -86,13 +86,12 @@ const UsersPannel = ({ users,ws,modId,setMod }) => {
               >
                 <Avatar mt="5px" ml="5" h="40px" w="40px" name={user.name} />
                 <Text fontSize={"xl"} maxWidth="180px">{user.name}</Text>
-
+                {parseInt(user.id) === modId && <FontAwesomeIcon style={{color:"#E5C717"}} icon={faCrown} />}
                 {auth.userId === modId && auth.userId.toString() !== user.id && <FontAwesomeIcon onClick={() => handleChangeMod(user.id)} icon={faCrown} />}
                 
               </HStack> 
             );
           }) : <Spinner/>}
-          {/* TODO: mejorar spinner */}
       </Box>
     </Box>
   );
